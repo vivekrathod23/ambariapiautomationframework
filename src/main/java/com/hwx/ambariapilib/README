@@ -1,0 +1,1 @@
+This package contains common libraries which will be used to develop testcases. Each API supported by Ambari should be considered to develop common test libraries using the clientlib of the framework. Primary use of this will be reusability and maintainability
