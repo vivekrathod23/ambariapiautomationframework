@@ -83,6 +83,35 @@ public class RestAssuredClient extends RestAPIClient {
     }
 
     /**
+     * Sends the HTTP GET request to server
+     * @param req
+     * @return HTTPResponse
+     */
+    //ToDo call proper get method
+    public HTTPResponse doGet(HTTPRequest req){
+        return doGet();
+    }
+
+
+    /**
+     * Sends the HTTP POST request to server
+     * @param path
+     * @return HTTPResponse
+     */
+    public HTTPResponse doPost(String path){
+        return toHTTPResponse(sendPostRequest(path));
+    }
+
+    /**
+     * Sends the HTTP POST request to server
+     * @param req
+     * @return
+     */
+    public HTTPResponse doPost(HTTPRequest req){
+        return doPost(req.getUrl());
+    }
+
+    /**
      * Send the HTTP Request to server.
      *
      * @param method
@@ -93,21 +122,14 @@ public class RestAssuredClient extends RestAPIClient {
         switch (req.getMethod()){
             case GET:
                 return doGet(req);
+            case POST:
+                return doPost(req);
         }
 
         //ToDo Must throw exception
         return null;
     }
 
-    /**
-     * Sends the HTTP GET request to server
-     * @param req
-     * @return HTTPResponse
-     */
-    //ToDo call proper get method
-    public HTTPResponse doGet(HTTPRequest req){
-        return doGet();
-    }
 
     /**
      * Validate the HTTP Response against the validation object.
@@ -145,12 +167,32 @@ public class RestAssuredClient extends RestAPIClient {
         return true;
     }
 
+
+
+
     /**
      * Method to send default GET request
      * @return Response object from Rest Assured
      */
     private Response sendGetRequest(){
         return sendGetRequest("/");
+    }
+
+    private Response sendPostRequest(String path){
+        String urlPath;
+
+        //Create the complete path if given relative path or else use the complete path
+        if(path.startsWith("/")) {
+            setRelativePath(path);
+            urlPath = getURLString();
+        }
+        else
+            urlPath = path;
+
+        if(getSpec()==null)
+            return post(urlPath);
+        else
+            return getSpec().header("X-Requested-By","ambari").post(urlPath);
     }
 
     private Response sendGetRequest(String path){
@@ -176,6 +218,7 @@ public class RestAssuredClient extends RestAPIClient {
      * @return com.hwx.clientlib.http.HTTPResponse
      */
     private HTTPResponse toHTTPResponse(Response resp){
+        System.out.println(resp.getBody().prettyPrint());
         return new HTTPResponse(resp.body().toString());
     }
 }

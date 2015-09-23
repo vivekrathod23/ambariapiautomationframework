@@ -90,6 +90,11 @@ public abstract class  RestAPIClient {
 
     public abstract HTTPResponse doGet(String path);
 
+    /**
+     * Send the HTTP Post request to server.
+     */
+
+    public abstract HTTPResponse doPost(String path);
 
     /**
      * Send the HTTP request to server
