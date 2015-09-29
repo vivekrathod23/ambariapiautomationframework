@@ -1,6 +1,11 @@
 package com.hwx;
 
-import com.hwx.clientlib.*;
+import com.hwx.ambariapilib.AmbariManager;
+import com.hwx.ambariapilib.host.Host;
+import com.hwx.clientlib.AuthType;
+import com.hwx.clientlib.RestAPIClient;
+import com.hwx.clientlib.RestAPIClientFactory;
+import com.hwx.clientlib.RestAPIClientType;
 import com.hwx.clientlib.http.HTTPHeader;
 import com.hwx.clientlib.http.HTTPMethods;
 import com.hwx.clientlib.http.HTTPRequest;
@@ -25,9 +30,9 @@ public class DemoTest {
         String[] hostNames = new String[] {"c6401.ambari.apache.com","c6402.ambari.apache.com","c6403.ambari.apache.com"};
 
         HTTPRequest req = new HTTPRequest(HTTPMethods.GET, "/hosts");
-        Validation validation = new Validation("items.Hosts.host_name", hostNames);
+//        Validation validation = new Validation("items.Hosts.host_name", hostNames);
 
-        System.out.println(rc.validateHTTPReponse(req, validation));
+//        System.out.println(rc.validateHTTPReponse(req, validation));
 
     }
 
@@ -51,5 +56,26 @@ public class DemoTest {
 
         System.out.println(rc.sendHTTPRequest(req).getBody().getBodyText());
 
+    }
+
+//    @Test
+//    public void hostDemoTest(){
+//
+//        AmbariManager manager = new AmbariManager();
+//
+//        System.out.println(manager.getClusters()[0].getClusterName());
+////        System.out.println(manager.getClusters()[0].getHosts()[0].getHostState());
+////        System.out.println(manager.getClusters()[0].getHosts()[0].getHostStatus());
+////        System.out.println(manager.getClusters()[0].getHosts()[1].getHostName());
+////        System.out.println(manager.getClusters()[0].getHosts()[2].getHostName());
+//    }
+
+    @Test
+    public void testCode(){
+        AmbariManager ambariManager = new AmbariManager();
+        Host[] hosts = ambariManager.getClusters()[0].getHosts();
+
+        System.out.println(hosts[0].getHealthState());
+        System.out.println(hosts[0].getHealthStatus());
     }
 }

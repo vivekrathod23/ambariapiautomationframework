@@ -89,7 +89,7 @@ public class RestAssuredClient extends RestAPIClient {
      */
     //ToDo call proper get method
     public HTTPResponse doGet(HTTPRequest req){
-        return doGet();
+        return doGet(req.getUrl());
     }
 
 
@@ -218,7 +218,6 @@ public class RestAssuredClient extends RestAPIClient {
      * @return com.hwx.clientlib.http.HTTPResponse
      */
     private HTTPResponse toHTTPResponse(Response resp){
-        System.out.println(resp.getBody().prettyPrint());
-        return new HTTPResponse(resp.body().toString());
+        return new HTTPResponse(resp.body().asString());
     }
 }

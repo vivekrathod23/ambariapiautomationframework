@@ -12,11 +12,11 @@ public class HTTPResponse {
     private String protocolVersion;
     private int StatusCode;
     private String ReasonPhrase;
-    private HTTPHeader headers;
-    private HTTPBody body;
+    private HTTPHeader headers = new HTTPHeader();
+    private HTTPBody body = new HTTPBody();
 
-    public HTTPResponse(String body) {
-        this.body.setBodyText(body);
+    public HTTPResponse(String bodyText) {
+        this.body.setBodyText(bodyText);
     }
 
     public HTTPBody getBody() {
