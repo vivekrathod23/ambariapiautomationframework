@@ -112,6 +112,95 @@ public class RestAssuredClient extends RestAPIClient {
     }
 
     /**
+     * Sends the HTTP PUT request to server
+     * @param req
+     * @return
+     */
+
+    private Response sendPutRequest(String path){
+        String urlPath;
+
+
+        //Create the complete path if given relative path or else use the complete path
+        if(path.startsWith("/")) {
+            setRelativePath(path);
+            urlPath = getURLString();
+        }
+        else
+            urlPath = path;
+
+        System.out.println("Sending PUT Request : " + urlPath);
+
+        if(getSpec()==null)
+            return put(urlPath);
+        else
+            return getSpec().header("X-Requested-By", "ambari").put(urlPath);
+    }
+
+    /**
+     * Sends the HTTP PUT request to server
+     * @param req
+     * @return
+     */
+
+    private Response sendPutRequest(String path,String bodyText){
+        String urlPath;
+
+
+        //Create the complete path if given relative path or else use the complete path
+        if(path.startsWith("/")) {
+            setRelativePath(path);
+            urlPath = getURLString();
+        }
+        else
+            urlPath = path;
+
+//        System.out.println("Sending PUT Request : "+urlPath);
+
+        if(getSpec()==null)
+            return given().body(bodyText).put(urlPath);
+        else {
+            Response resp = getSpec().header("X-Requested-By", "ambari").body(bodyText).put(urlPath);
+//            System.out.println(resp.getBody().asString());
+            setSpec(given().auth().preemptive().basic("admin", "admin").when());
+            return resp;
+        }
+    }
+
+    /**
+     * Sends the HTTP PUT request to server
+     * @param req
+     * @return
+     */
+
+    public HTTPResponse doPut(HTTPRequest req){
+        if(req.getBody().getBodyText().length() > 0)
+            return doPut(req.getUrl(), req.getBody().getBodyText());
+        else
+            return doPut(req.getUrl());
+    }
+
+    /**
+     * Sends the HTTP PUT request to server
+     * @param req
+     * @return
+     */
+
+    public HTTPResponse doPut(String url){
+        return toHTTPResponse(sendPutRequest(url));
+    }
+
+    /**
+     * Sends the HTTP PUT request to server
+     * @param req
+     * @return
+     */
+
+    public HTTPResponse doPut(String url,String bodyText){
+        return toHTTPResponse(sendPutRequest(url,bodyText));
+    }
+
+    /**
      * Send the HTTP Request to server.
      *
      * @param method
@@ -124,6 +213,8 @@ public class RestAssuredClient extends RestAPIClient {
                 return doGet(req);
             case POST:
                 return doPost(req);
+            case PUT:
+                return doPut(req);
         }
 
         //ToDo Must throw exception
@@ -206,6 +297,8 @@ public class RestAssuredClient extends RestAPIClient {
         else
             urlPath = path;
 
+//        System.out.println("Get Request : "+urlPath);
+
         if(getSpec()==null)
             return get(urlPath);
         else
@@ -218,6 +311,7 @@ public class RestAssuredClient extends RestAPIClient {
      * @return com.hwx.clientlib.http.HTTPResponse
      */
     private HTTPResponse toHTTPResponse(Response resp){
+//        System.out.println("Response : "+resp.body().asString());
         return new HTTPResponse(resp.body().asString());
     }
 }

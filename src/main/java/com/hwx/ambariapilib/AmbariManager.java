@@ -1,5 +1,6 @@
 package com.hwx.ambariapilib;
 
+import com.hwx.ambariapilib.cluster.Cluster;
 import com.hwx.clientlib.AuthType;
 import com.hwx.clientlib.RestAPIClient;
 import com.hwx.clientlib.RestAPIClientFactory;
@@ -28,7 +29,6 @@ public class AmbariManager {
 
               HTTPResponse resp = rc.sendHTTPRequest(req);
 
-//              System.out.println(resp.getBody().getBodyText());
 
               //ToDo Parse the Json and create a cluster object
 

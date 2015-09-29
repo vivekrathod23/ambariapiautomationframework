@@ -7,6 +7,12 @@ public class HTTPBody {
 
     String bodyText;
 
+    public HTTPBody(){}
+
+    public HTTPBody(String bodyText) {
+        this.bodyText = bodyText;
+    }
+
     public String getBodyText() {
         return bodyText;
     }
