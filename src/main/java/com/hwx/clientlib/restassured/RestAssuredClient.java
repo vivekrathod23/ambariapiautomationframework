@@ -2,20 +2,25 @@ package com.hwx.clientlib.restassured;
 
 
 
-import com.hwx.clientlib.AuthType;
-import com.hwx.clientlib.RestAPIClient;
-import com.hwx.clientlib.Validation;
-import com.hwx.clientlib.http.HTTPMethods;
-import com.hwx.clientlib.http.HTTPRequest;
-import com.hwx.clientlib.http.HTTPResponse;
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.response.Response;
+import static com.jayway.restassured.RestAssured.basic;
+import static com.jayway.restassured.RestAssured.get;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.post;
+import static com.jayway.restassured.RestAssured.put;
+import static org.hamcrest.Matchers.hasItems;
 
 import java.util.Map;
 
-import static com.jayway.restassured.RestAssured.*;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasItems;
+import com.hwx.clientlib.AuthType;
+import com.hwx.clientlib.RestAPIClient;
+import com.hwx.clientlib.Validation;
+import com.hwx.clientlib.http.HTTPRequest;
+import com.hwx.clientlib.http.HTTPResponse;
+import com.hwx.utils.config.ConfigManager;
+import com.hwx.utils.config.ConfigProperties;
+import com.hwx.utils.logging.AmbariLogger;
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.response.Response;
 
 
 /**
@@ -26,10 +31,21 @@ import static org.hamcrest.Matchers.hasItems;
  * This is REST API client implementation using Rest Assured Framework
  */
 public class RestAssuredClient extends RestAPIClient {
-
+	
+    public ConfigManager conf = ConfigManager.getInstance();
+    public AmbariLogger logger = AmbariLogger.getAmbariLoggerInstance(RestAssuredClient.class.getSimpleName());
+	
+	private String ambariAdminUserName ="";
+	private String ambariAdminPassword= "";
+	
     public RestAssuredClient(){
         super();
-
+        try {
+			 ambariAdminUserName = conf.getString(ConfigProperties.AMBARI_ADMIN_USER.getKey());
+			 ambariAdminPassword = conf.getString(ConfigProperties.AMBARI_ADMIN_PASSWORD.getKey());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
         RestAssured.registerParser("text/plain", com.jayway.restassured.parsing.Parser.JSON);
     }
 
@@ -60,9 +76,9 @@ public class RestAssuredClient extends RestAPIClient {
 
         switch(authType){
             case BASIC:
-                RestAssured.authentication = basic("admin", "admin");
+                RestAssured.authentication = basic(ambariAdminUserName, ambariAdminPassword);
                 //ToDo can we remove this?
-                setSpec(given().auth().preemptive().basic("admin", "admin").when());
+                setSpec(given().auth().preemptive().basic(ambariAdminUserName, ambariAdminPassword).when());
         }
     }
 
@@ -144,8 +160,8 @@ public class RestAssuredClient extends RestAPIClient {
      */
 
     private Response sendPutRequest(String path,String bodyText){
+    	
         String urlPath;
-
 
         //Create the complete path if given relative path or else use the complete path
         if(path.startsWith("/")) {
@@ -154,15 +170,14 @@ public class RestAssuredClient extends RestAPIClient {
         }
         else
             urlPath = path;
-
-//        System.out.println("Sending PUT Request : "+urlPath);
+        	logger.logInfo("Request path : " +urlPath);
 
         if(getSpec()==null)
             return given().body(bodyText).put(urlPath);
         else {
             Response resp = getSpec().header("X-Requested-By", "ambari").body(bodyText).put(urlPath);
-//            System.out.println(resp.getBody().asString());
-            setSpec(given().auth().preemptive().basic("admin", "admin").when());
+            logger.logInfo("Response body : " +resp.getBody().asString());
+            setSpec(given().auth().preemptive().basic(ambariAdminUserName, ambariAdminPassword).when());
             return resp;
         }
     }
