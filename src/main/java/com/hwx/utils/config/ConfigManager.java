@@ -4,17 +4,22 @@ import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
+/**
+ * Created by nkashyap on 24/09/15.
+ */
 public class ConfigManager {
 
+	private static ConfigManager configManager ;
 	PropertiesConfiguration defaultConfig = null;
 	PropertiesConfiguration overrideConfig = null;
 	CompositeConfiguration config = new CompositeConfiguration();
 	String fileSeparator = System.getProperty("file.separator");
 	String baseFilePath = System.getProperty("user.dir") + fileSeparator + "resources" + fileSeparator;
 
-	public ConfigManager() {
+	private ConfigManager() {
 
 		try {
+			
 			// read default
 			String defaultConfigFilePath = baseFilePath + "default.properties";
 			System.out.println("Default config : " + defaultConfigFilePath);
@@ -33,22 +38,56 @@ public class ConfigManager {
 			config.addConfiguration(defaultConfig);
 
 		} catch (ConfigurationException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
 	}
-
-	public String getStringProperty(String key) {
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static ConfigManager getInstance() {
+		
+		 if (configManager == null) {
+			 
+		      synchronized (ConfigManager.class) {
+		    	  
+		    	  if (configManager == null) {
+		    		  configManager = new ConfigManager();
+		    	  }
+		      }
+		      
+		 }
+		    return configManager;
+	}
+	
+	
+	/**
+	 * Get String property value
+	 * @param key
+	 * @return
+	 * @throws Exception 
+	 */
+	public String getString(String key) throws Exception {
 		return config.getString(key);
 	}
 
-	public int getIntProperty(String key) {
+	
+	/**
+	 * Get Int property value
+	 * @param key
+	 * @return
+	 * @throws Exception 
+	 */
+	public int getInt(String key) throws Exception {
 		return config.getInt(key);
 	}
-
+	
+	
 	/**
-	 * Sets property value of default configuration properties file
+	 * Sets property value of default configuration fields
 	 * @param key
 	 * @param value
 	 */
@@ -69,7 +108,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Sets property value of user defined config files
+	 * Sets value of user defined config fields
 	 * @param key
 	 * @param value
 	 */

@@ -1,5 +1,7 @@
 package com.hwx.clientlib;
 
+import com.hwx.DemoTest;
+
 /**
  * Created by ajain on 9/11/15.
  */
@@ -7,6 +9,8 @@ package com.hwx.clientlib;
 //ToDo this need to be removed. This is specific to Rest Assured
 import com.hwx.clientlib.http.HTTPRequest;
 import com.hwx.clientlib.http.HTTPResponse;
+import com.hwx.utils.config.ConfigManager;
+import com.hwx.utils.logging.AmbariLogger;
 import com.jayway.restassured.specification.RequestSpecification;
 
 /**
@@ -15,7 +19,7 @@ import com.jayway.restassured.specification.RequestSpecification;
  * Any REST client implementation will inherit this interface
  */
 public abstract class  RestAPIClient {
-
+    
     private String protocol = "http";
     private String host="localhost";
     private int port=80;

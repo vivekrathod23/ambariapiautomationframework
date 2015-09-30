@@ -9,6 +9,8 @@ import com.hwx.clientlib.http.HTTPBody;
 import com.hwx.clientlib.http.HTTPMethods;
 import com.hwx.clientlib.http.HTTPRequest;
 import com.hwx.clientlib.http.HTTPResponse;
+import com.hwx.clientlib.restassured.RestAssuredClient;
+import com.hwx.utils.logging.AmbariLogger;
 import com.jayway.restassured.path.json.JsonPath;
 
 import java.util.List;
@@ -21,6 +23,7 @@ public class Cluster extends AmbariItems {
     private String clusterName;
     private String version;
     private Host[] hosts;
+    
 
     private Cluster() {
         super();
@@ -72,9 +75,10 @@ public class Cluster extends AmbariItems {
 
         Gson gson = new Gson();
         ServiceJson serviceJson = gson.fromJson(resp.getBody().getBodyText(), ServiceJson.class);
+        logger.logInfo("Response body : " +resp.getBody().getBodyText());
         String serviceUrl = serviceJson.getHref();
+        logger.logInfo("Service URL : " +serviceUrl);
 
-//        System.out.println(serviceUrl);
 
         int counter = 10;
 
@@ -97,7 +101,6 @@ public class Cluster extends AmbariItems {
             counter--;
         }
 
-//        System.out.println(resp.getBody().getBodyText());
 
     }
 }
