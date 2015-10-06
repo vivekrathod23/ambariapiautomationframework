@@ -1,5 +1,6 @@
 package com.hwx.ambariapilib;
 
+import com.google.gson.Gson;
 import com.hwx.clientlib.AuthType;
 import com.hwx.clientlib.RestAPIClient;
 import com.hwx.clientlib.RestAPIClientFactory;
@@ -16,6 +17,7 @@ public abstract class AmbariItems {
 	protected static RestAPIClient rc = RestAPIClientFactory.getAPIClient(RestAPIClientType.RESTASSURED);
 	protected AmbariLogger logger = AmbariLogger.getAmbariLoggerInstance(AmbariItems.class.getSimpleName());
 	protected ConfigManager conf = ConfigManager.getInstance();
+	protected Gson gson = new Gson();
 
 	public AmbariItems() {
 		try {

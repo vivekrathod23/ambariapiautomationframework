@@ -1,5 +1,7 @@
 package com.hwx.ambariapilib.service;
 
+import com.hwx.ambariapilib.json.ResourceFilters;
+
 /**
  * Created by ajain on 9/29/15.
  */
