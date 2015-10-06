@@ -26,7 +26,7 @@ public class DemoTest {
 
     @Test
     public void testHostState(){
-        Host[] hosts = ambariManager.getClusters()[0].getHosts();
+        Host[] hosts = ambariManager.getClusters().get(0).getHosts();
 
         for(int i=0;i<hosts.length;i++){
             logger.logInfo("Host : "+hosts[i]+" State : "+hosts[i].getHealthState());
@@ -38,7 +38,7 @@ public class DemoTest {
     public void testStartHDFSService(){
         long startTime = (new Date()).getTime();
         logger.logInfo("Start time : " +startTime);
-        ambariManager.getClusters()[0].startService("HDFS");
+        ambariManager.getClusters().get(0).startService("HDFS");
         long endTime = (new Date()).getTime();
         logger.logInfo("End time : " +endTime);
         logger.logInfo("Time to start the service (in minutes): "+((endTime-startTime)/(1000*60)));
@@ -49,7 +49,7 @@ public class DemoTest {
     public void testStopHDFSService(){
         long startTime = (new Date()).getTime();
         logger.logInfo("Start time : " +startTime);
-        ambariManager.getClusters()[0].stopService("HDFS");
+        ambariManager.getClusters().get(0).stopService("HDFS");
         long endTime = (new Date()).getTime();
         logger.logInfo("End time : " +endTime);
         logger.logInfo("Time to stop the service (in minutes): "+((endTime-startTime)/(1000*60)));
@@ -58,37 +58,38 @@ public class DemoTest {
 
     @Test
     public void testAddHost(){
-        ambariManager.getClusters()[0].addHost("c6403.ambari.apache.org");
+    	ambariManager.getClusters().get(0).addHost("c6403.ambari.apache.org");
     }
 
     @Test
     public void testService(){
-        System.out.println(ambariManager.getClusters()[0].getServices().get(1).getClusterServiceDetailsJson().getServiceInfo().getService_name());
+        System.out.println(ambariManager.getClusters().get(0).getServices().get(1).getClusterServiceDetailsJson().getServiceInfo().getService_name());
     }
 
     @Test
     public void testCreateService(){
-        ambariManager.getClusters()[0].createServices("HIVE");
+    	ambariManager.getClusters().get(0).createServices("HIVE");
     }
 
     @Test
     public void testStartService(){
-        ambariManager.getClusters()[0].startService("HDFS");
+    	ambariManager.getClusters().get(0).startService("HDFS");
     }
 
     @Test
     public void testStopService(){
-        ambariManager.getClusters()[0].stopService("HDFS");
+    	ambariManager.getClusters().get(0).stopService("HDFS");
     }
 
     @Test
     public void testStartAllServices(){
-        ambariManager.getClusters()[0].startAllServices();
+    	ambariManager.getClusters().get(0).startAllServices();
     }
 
     @Test
     public void testStopAllServices(){
-        ambariManager.getClusters()[0].stopAllServices();
+    	ambariManager.getClusters().get(0).stopAllServices();
     }
+    
     
 }

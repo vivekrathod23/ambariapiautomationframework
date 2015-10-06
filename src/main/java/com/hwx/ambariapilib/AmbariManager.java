@@ -1,5 +1,6 @@
 package com.hwx.ambariapilib;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.hwx.ambariapilib.cluster.Cluster;
@@ -21,7 +22,7 @@ import com.jayway.restassured.path.json.JsonPath;
 public class AmbariManager {
 
        private static RestAPIClient rc = RestAPIClientFactory.getAPIClient(RestAPIClientType.RESTASSURED);
-       Cluster[] clusters;
+       List<Cluster> clusters = new ArrayList<Cluster>();
        ConfigManager conf = ConfigManager.getInstance();
        LogManager logger = LogManager.getLoggerInstance(AmbariManager.class.getSimpleName());
 
@@ -36,11 +37,7 @@ public class AmbariManager {
 			}
               
               HTTPRequest req = new HTTPRequest(HTTPMethods.GET, "/clusters");
-
               HTTPResponse resp = rc.sendHTTPRequest(req);
-
-
-              //ToDo Parse the Json and create a cluster object
 
               JsonPath path = new JsonPath(resp.getBody().getBodyText());
 
@@ -49,16 +46,15 @@ public class AmbariManager {
               List<String> versionList =path.getList("items.Clusters.version");
 
               Cluster cluster = new Cluster(clusterNameList.get(0), versionList.get(0));
-
-              clusters = new Cluster[1];
-              clusters[0] = cluster;
+             
+              clusters.add(cluster) ;
        }
 
-       public Cluster[] getClusters() {
+       public List<Cluster> getClusters() {
               return clusters;
        }
 
-       public void setClusters(Cluster[] clusters) {
+       public void setClusters(List<Cluster> clusters) {
               this.clusters = clusters;
        }
 }
