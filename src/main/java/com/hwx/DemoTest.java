@@ -63,7 +63,7 @@ public class DemoTest {
 
     @Test
     public void testService(){
-        System.out.println(ambariManager.getClusters().get(0).getServices().get(1).getClusterServiceDetailsJson().getServiceInfo().getService_name());
+        logger.logInfo(ambariManager.getClusters().get(0).getServices().get(1).getClusterServiceDetailsJson().getServiceInfo().getService_name());
     }
 
     @Test
@@ -91,5 +91,9 @@ public class DemoTest {
     	ambariManager.getClusters().get(0).stopAllServices();
     }
     
+    @Test
+    public void testHosts(){
+    	logger.logInfo(ambariManager.getClusters().get(0).getAllHosts().get(0).getHostJson().getHosts().getHost_name());
+    }
     
 }

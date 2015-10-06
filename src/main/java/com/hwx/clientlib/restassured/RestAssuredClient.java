@@ -312,7 +312,7 @@ public class RestAssuredClient extends RestAPIClient {
         else
             urlPath = path;
 
-//        System.out.println("Get Request : "+urlPath);
+        logger.logDebug("UrlPath : " +urlPath);
 
         if(getSpec()==null)
             return get(urlPath);

@@ -1,19 +1,24 @@
 package com.hwx.ambariapilib.cluster;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.hwx.ambariapilib.AmbariItems;
 import com.hwx.ambariapilib.host.Host;
+import com.hwx.ambariapilib.json.cluster.ClusterHostsListJson;
 import com.hwx.ambariapilib.json.cluster.ClusterJson;
 import com.hwx.ambariapilib.json.cluster.ClusterServicesListJson;
 import com.hwx.ambariapilib.json.cluster.RequestJson;
+import com.hwx.ambariapilib.json.host.HostsJson;
 import com.hwx.ambariapilib.json.service.ServiceJson;
 import com.hwx.ambariapilib.service.Service;
 import com.hwx.clientlib.http.HTTPBody;
 import com.hwx.clientlib.http.HTTPMethods;
 import com.hwx.clientlib.http.HTTPRequest;
 import com.hwx.clientlib.http.HTTPResponse;
+import com.hwx.utils.FileUtils;
 
 /**
  * Created by ajain on 9/23/15.
@@ -63,6 +68,26 @@ public class Cluster extends AmbariItems {
 
         return services;
     }
+    
+    //Get all the Hosts inside the cluster
+    public ArrayList<Host> getAllHosts(){
+        ArrayList<Host> hosts = new ArrayList<Host>();
+
+        HTTPRequest req = new HTTPRequest(HTTPMethods.GET, "/clusters/"+clusterName+"/hosts");
+        HTTPResponse resp = rc.sendHTTPRequest(req);
+        
+        ClusterHostsListJson clusterHostsListJson = gson.fromJson(resp.getBody().getBodyText(), ClusterHostsListJson.class);
+
+        //Get the count of items
+        int numItems = clusterHostsListJson.getItems().length;
+
+        for(int i=0;i<numItems;i++) {
+        	hosts.add(new Host(clusterHostsListJson.getItems()[i].getHref()));
+        }
+        
+        return hosts;
+
+    }
 
     //Create a new service inside the cluster
     public HTTPResponse createServices(String serviceName){
@@ -85,10 +110,14 @@ public class Cluster extends AmbariItems {
 
     //Update all the services
     public HTTPResponse updateAllServices(String status){
-        //ToDo Move to JSON file
-        String body = "{\"ServiceInfo\":{\"state\" : \"{STATUS}\"}}";
+    	Map<String, String> map = new HashMap<String, String>();
+		map.put("{STATUS}", status);
+		logger.logDebug("Status: " +status);
+
+		String body = FileUtils.getJsonAsString("ServiceInfo.json", map);
+		logger.logInfo("Request body  : " + body);
+
         HTTPRequest req = new HTTPRequest(HTTPMethods.PUT, "/clusters/"+clusterName+"/services");
-        body = body.replace("{STATUS}",status);
         req.setBody(new HTTPBody(body));
         HTTPResponse resp = rc.sendHTTPRequest(req);
 
@@ -161,6 +190,7 @@ public class Cluster extends AmbariItems {
 
         return hosts;
     }
+    
 
     public void addHost(String hostName){
         HTTPRequest req = new HTTPRequest(HTTPMethods.POST, "/clusters/"+clusterName+"/hosts/"+hostName);
@@ -172,25 +202,28 @@ public class Cluster extends AmbariItems {
 
 
     private void updateServiceStatus(String serviceName, String status) {
-        //ToDo Move this to JSON file
-        String requestBody = "{\"RequestInfo\": {\"context\" :\"Stop {SERVICE} via REST\"}, \"Body\": {\"ServiceInfo\": {\"state\": \"{STATUS}\"}}}";
-        requestBody = requestBody.replace("{SERVICE}",serviceName);
-        requestBody = requestBody.replace("{STATUS}",status);
+    	
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("{SERVICE}", serviceName);
+		map.put("{STATUS}", status);
+		
+		logger.logDebug("Service Name: " +serviceName);
+		logger.logDebug("Status: " +status);
 
-//        System.out.println(requestBody);
-//        System.out.println(serviceName+"  "+status);
+		String requestBody = FileUtils.getJsonAsString("Service.json", map);
+		logger.logInfo("Request body  : " + requestBody);
 
-        HTTPRequest req = new HTTPRequest(HTTPMethods.PUT, "/clusters/"+clusterName+"/services/"+serviceName);
-        req.setBody(new HTTPBody(requestBody));
-        HTTPResponse resp = rc.sendHTTPRequest(req);
+		HTTPRequest req = new HTTPRequest(HTTPMethods.PUT, "/clusters/" + clusterName + "/services/" + serviceName);
+		req.setBody(new HTTPBody(requestBody));
+		HTTPResponse resp = rc.sendHTTPRequest(req);
 
-        Gson gson = new Gson();
-        ServiceJson serviceJson = gson.fromJson(resp.getBody().getBodyText(), ServiceJson.class);
-        logger.logInfo("Response body : " +resp.getBody().getBodyText());
-        String serviceUrl = serviceJson.getHref();
-        logger.logInfo("Service URL : " +serviceUrl);
+		Gson gson = new Gson();
+		ServiceJson serviceJson = gson.fromJson(resp.getBody().getBodyText(), ServiceJson.class);
+		logger.logInfo("Response body : " + resp.getBody().getBodyText());
+		String serviceUrl = serviceJson.getHref();
+		logger.logInfo("Service URL : " + serviceUrl);
 
-        waitForServiceCompletion(serviceUrl);
+		waitForServiceCompletion(serviceUrl);
     }
 
     public String getServiceStatus(String serviceStatusAPIUrl){

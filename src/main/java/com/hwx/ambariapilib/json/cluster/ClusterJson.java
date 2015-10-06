@@ -3,7 +3,7 @@ package com.hwx.ambariapilib.json.cluster;
 import com.hwx.ambariapilib.json.common.AlertDefinitionsJson;
 import com.hwx.ambariapilib.json.common.AlertSummaryJson;
 import com.hwx.ambariapilib.json.common.AlertsJson;
-import com.hwx.ambariapilib.json.host.Host;
+import com.hwx.ambariapilib.json.host.ClusterHostsJson;
 import com.hwx.ambariapilib.service.Request;
 
 /**
@@ -18,7 +18,7 @@ public class ClusterJson {
     private PrivilegeJson[] privileges;
     private ConfigGroupJson[] config_groups;
     private StackVersion[] stack_versions;
-    private Host[] hosts;
+    private ClusterHostsJson[] hosts;
     private ConfigurationJson[] configurations;
     private ServiceConfigVersion[] service_config_versions;
     private AlertDefinitionsJson[] alert_definitions;
@@ -91,11 +91,11 @@ public class ClusterJson {
         this.stack_versions = stack_versions;
     }
 
-    public Host[] getHosts() {
+    public ClusterHostsJson[] getHosts() {
         return hosts;
     }
 
-    public void setHosts(Host[] hosts) {
+    public void setHosts(ClusterHostsJson[] hosts) {
         this.hosts = hosts;
     }
 

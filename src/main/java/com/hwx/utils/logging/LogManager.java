@@ -85,7 +85,7 @@ public class LogManager {
     }
         
 
-    public void logFine(String message){
+    public void logDebug(String message){
             log(Level.FINE, message);
     }
     
