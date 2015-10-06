@@ -7,7 +7,7 @@ import com.hwx.clientlib.RestAPIClientFactory;
 import com.hwx.clientlib.RestAPIClientType;
 import com.hwx.utils.config.ConfigManager;
 import com.hwx.utils.config.ConfigProperties;
-import com.hwx.utils.logging.AmbariLogger;
+import com.hwx.utils.logging.LogManager;
 
 /**
  * Created by ajain on 9/28/15.
@@ -15,7 +15,7 @@ import com.hwx.utils.logging.AmbariLogger;
 public abstract class AmbariItems {
 
 	protected static RestAPIClient rc = RestAPIClientFactory.getAPIClient(RestAPIClientType.RESTASSURED);
-	protected AmbariLogger logger = AmbariLogger.getAmbariLoggerInstance(AmbariItems.class.getSimpleName());
+	protected LogManager logger = LogManager.getLoggerInstance(AmbariItems.class.getSimpleName());
 	protected ConfigManager conf = ConfigManager.getInstance();
 	protected Gson gson = new Gson();
 

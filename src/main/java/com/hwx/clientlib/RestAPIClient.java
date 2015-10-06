@@ -10,7 +10,7 @@ import com.hwx.DemoTest;
 import com.hwx.clientlib.http.HTTPRequest;
 import com.hwx.clientlib.http.HTTPResponse;
 import com.hwx.utils.config.ConfigManager;
-import com.hwx.utils.logging.AmbariLogger;
+import com.hwx.utils.logging.LogManager;
 import com.jayway.restassured.specification.RequestSpecification;
 
 /**

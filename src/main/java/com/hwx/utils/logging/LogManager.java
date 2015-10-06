@@ -14,7 +14,7 @@ import com.hwx.utils.config.ConfigProperties;
 /**
  * Created by nkashyap on 28/09/15.
  */
-public class AmbariLogger {
+public class LogManager {
 
 	static String baseFilePath = System.getProperty("user.dir") + System.getProperty("file.separator") + "logs" + System.getProperty("file.separator");
     protected static final String LOCATION=baseFilePath;
@@ -23,10 +23,10 @@ public class AmbariLogger {
     protected final static int MAX_LOG_COUNT = 10;
     protected static Logger logger;
     protected static final String DATE_FORMAT = "hh:mm:ss a MM-dd-yyyy";
-    private static AmbariLogger ambariLogger = null;
+    private static LogManager ambariLogger = null;
     
         
-    private AmbariLogger(String className){
+    private LogManager(String className){
     	
    	 	Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
@@ -38,10 +38,10 @@ public class AmbariLogger {
    }
        
     
-    public static AmbariLogger getAmbariLoggerInstance(String className){
+    public static LogManager getLoggerInstance(String className){
     	
     	if(null == ambariLogger){  		
-    		ambariLogger = new AmbariLogger(className);        
+    		ambariLogger = new LogManager(className);        
     	}   	
     	return ambariLogger;
     }

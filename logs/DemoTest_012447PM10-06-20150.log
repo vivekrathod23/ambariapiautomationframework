@@ -1,0 +1,9 @@
+01:24:48 PM 10-06-2015 DemoTest INFO - Content : {
+  "RequestInfo": 
+  	{"context" :"Start PIG via REST"}, 
+     "Body": 
+     	{"ServiceInfo": 
+        	{"state": "INSTALLED"
+            }
+        }
+}

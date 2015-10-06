@@ -12,7 +12,7 @@ import com.hwx.clientlib.http.HTTPRequest;
 import com.hwx.clientlib.http.HTTPResponse;
 import com.hwx.utils.config.ConfigManager;
 import com.hwx.utils.config.ConfigProperties;
-import com.hwx.utils.logging.AmbariLogger;
+import com.hwx.utils.logging.LogManager;
 import com.jayway.restassured.path.json.JsonPath;
 
 /**
@@ -23,7 +23,7 @@ public class AmbariManager {
        private static RestAPIClient rc = RestAPIClientFactory.getAPIClient(RestAPIClientType.RESTASSURED);
        Cluster[] clusters;
        ConfigManager conf = ConfigManager.getInstance();
-       AmbariLogger logger = AmbariLogger.getAmbariLoggerInstance(AmbariManager.class.getSimpleName());
+       LogManager logger = LogManager.getLoggerInstance(AmbariManager.class.getSimpleName());
 
        public AmbariManager(){
 
