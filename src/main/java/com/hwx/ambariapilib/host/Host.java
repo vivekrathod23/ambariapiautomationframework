@@ -2,9 +2,9 @@ package com.hwx.ambariapilib.host;
 
 import com.google.gson.Gson;
 import com.hwx.ambariapilib.AmbariItems;
-import com.hwx.ambariapilib.json.HostJson;
-import com.hwx.ambariapilib.json.RequestJson;
-import com.hwx.ambariapilib.json.ServiceJson;
+import com.hwx.ambariapilib.json.cluster.RequestJson;
+import com.hwx.ambariapilib.json.host.HostJson;
+import com.hwx.ambariapilib.json.service.ServiceJson;
 import com.hwx.clientlib.http.HTTPBody;
 import com.hwx.clientlib.http.HTTPMethods;
 import com.hwx.clientlib.http.HTTPRequest;

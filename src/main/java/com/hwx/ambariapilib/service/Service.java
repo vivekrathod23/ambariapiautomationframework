@@ -1,7 +1,7 @@
 package com.hwx.ambariapilib.service;
 
 import com.hwx.ambariapilib.AmbariItems;
-import com.hwx.ambariapilib.json.ClusterServiceDetailsJson;
+import com.hwx.ambariapilib.json.cluster.ClusterServiceDetailsJson;
 import com.hwx.clientlib.http.HTTPMethods;
 import com.hwx.clientlib.http.HTTPRequest;
 import com.hwx.clientlib.http.HTTPResponse;

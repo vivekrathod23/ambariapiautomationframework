@@ -1,6 +1,6 @@
 package com.hwx.ambariapilib.service;
 
-import com.hwx.ambariapilib.json.ResourceFilters;
+import com.hwx.ambariapilib.json.host.ResourceFiltersJson;
 
 /**
  * Created by ajain on 9/29/15.
@@ -21,7 +21,7 @@ public class Request {
     private String request_context;
     private String request_schedule;
     private String request_status;
-    private ResourceFilters[] resource_filters;
+    private ResourceFiltersJson[] resource_filters;
     private long start_time;
     private int task_count;
     private int timed_out_task_count;
@@ -147,11 +147,11 @@ public class Request {
         this.request_status = request_status;
     }
 
-    public ResourceFilters[] getResource_filters() {
+    public ResourceFiltersJson[] getResource_filters() {
         return resource_filters;
     }
 
-    public void setResource_filters(ResourceFilters[] resource_filters) {
+    public void setResource_filters(ResourceFiltersJson[] resource_filters) {
         this.resource_filters = resource_filters;
     }
 

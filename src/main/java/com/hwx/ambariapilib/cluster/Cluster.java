@@ -1,20 +1,19 @@
 package com.hwx.ambariapilib.cluster;
 
+import java.util.ArrayList;
+
 import com.google.gson.Gson;
 import com.hwx.ambariapilib.AmbariItems;
 import com.hwx.ambariapilib.host.Host;
-import com.hwx.ambariapilib.json.ClusterJson;
-
-import com.hwx.ambariapilib.json.ClusterServicesListJson;
-import com.hwx.ambariapilib.json.RequestJson;
-import com.hwx.ambariapilib.json.ServiceJson;
+import com.hwx.ambariapilib.json.cluster.ClusterJson;
+import com.hwx.ambariapilib.json.cluster.ClusterServicesListJson;
+import com.hwx.ambariapilib.json.cluster.RequestJson;
+import com.hwx.ambariapilib.json.service.ServiceJson;
 import com.hwx.ambariapilib.service.Service;
 import com.hwx.clientlib.http.HTTPBody;
 import com.hwx.clientlib.http.HTTPMethods;
 import com.hwx.clientlib.http.HTTPRequest;
 import com.hwx.clientlib.http.HTTPResponse;
-
-import java.util.ArrayList;
 
 /**
  * Created by ajain on 9/23/15.
