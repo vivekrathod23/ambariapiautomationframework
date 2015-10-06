@@ -1,20 +1,21 @@
 package com.hwx;
 
-import com.hwx.ambariapilib.AmbariManager;
-import com.hwx.ambariapilib.host.Host;
-import com.hwx.utils.logging.AmbariLogger;
+import java.util.Date;
+
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.util.Date;
+import com.hwx.ambariapilib.AmbariManager;
+import com.hwx.ambariapilib.host.Host;
+import com.hwx.utils.logging.LogManager;
 
 /**
  * Created by ajain on 9/11/15.
  */
 public class DemoTest {
 
-	AmbariLogger logger = AmbariLogger.getAmbariLoggerInstance(DemoTest.class.getSimpleName());
+	LogManager logger = LogManager.getLoggerInstance(DemoTest.class.getSimpleName());
 
     AmbariManager ambariManager;
 
@@ -89,4 +90,5 @@ public class DemoTest {
     public void testStopAllServices(){
         ambariManager.getClusters()[0].stopAllServices();
     }
+    
 }

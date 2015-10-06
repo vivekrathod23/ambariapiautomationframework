@@ -18,7 +18,7 @@ import com.hwx.clientlib.http.HTTPRequest;
 import com.hwx.clientlib.http.HTTPResponse;
 import com.hwx.utils.config.ConfigManager;
 import com.hwx.utils.config.ConfigProperties;
-import com.hwx.utils.logging.AmbariLogger;
+import com.hwx.utils.logging.LogManager;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
 
@@ -33,7 +33,7 @@ import com.jayway.restassured.response.Response;
 public class RestAssuredClient extends RestAPIClient {
 	
     public ConfigManager conf = ConfigManager.getInstance();
-    public AmbariLogger logger = AmbariLogger.getAmbariLoggerInstance(RestAssuredClient.class.getSimpleName());
+    public LogManager logger = LogManager.getLoggerInstance(RestAssuredClient.class.getSimpleName());
 	
 	private String ambariAdminUserName ="";
 	private String ambariAdminPassword= "";
