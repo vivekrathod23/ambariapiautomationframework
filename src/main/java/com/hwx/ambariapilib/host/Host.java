@@ -1,14 +1,21 @@
 package com.hwx.ambariapilib.host;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gson.Gson;
 import com.hwx.ambariapilib.AmbariItems;
+import com.hwx.ambariapilib.json.cluster.ClusterServiceDetailsJson;
 import com.hwx.ambariapilib.json.cluster.RequestJson;
 import com.hwx.ambariapilib.json.host.HostJson;
+import com.hwx.ambariapilib.json.host.HostsJson;
 import com.hwx.ambariapilib.json.service.ServiceJson;
 import com.hwx.clientlib.http.HTTPBody;
 import com.hwx.clientlib.http.HTTPMethods;
 import com.hwx.clientlib.http.HTTPRequest;
 import com.hwx.clientlib.http.HTTPResponse;
+import com.hwx.utils.FileUtils;
+import com.hwx.utils.config.ConfigProperties;
 
 /**
  * Created by ajain on 9/23/15.
@@ -20,7 +27,7 @@ public class Host extends AmbariItems{
 
     private HostJson hostJson;
 
-    public Host() {
+	public Host() {
         super();
     }
 
@@ -35,8 +42,14 @@ public class Host extends AmbariItems{
         hostJson = gson.fromJson(resp.getBody().getBodyText(), HostJson.class);
     }
 
+    public Host(String hostAPIUrl){
+        HTTPRequest req = new HTTPRequest(HTTPMethods.GET, hostAPIUrl);
+        HTTPResponse resp = rc.sendHTTPRequest(req);
 
-    public void startHostComponentse(String hostComponent){
+        hostJson= gson.fromJson(resp.getBody().getBodyText(), HostJson.class);
+    }
+
+    public void startHostComponents(String hostComponent){
         changeHostComponents(hostComponent,"STARTED");
     }
 
@@ -45,9 +58,14 @@ public class Host extends AmbariItems{
     }
 
     private void changeHostComponents(String hostComponent, String status) {
-        //ToDo Move this to JSON file
-        String requestBody = "{\"HostRoles\": {\"state\": \"STARTED\"}}";
-        requestBody.replaceAll("{STATUS}",status);
+    	
+    	Map<String, String> map = new HashMap<String, String>();
+		map.put("{STATUS}", status);
+		logger.logDebug("Status: " +status);
+
+		String requestBody = FileUtils.getJsonAsString("HostComponent.json", map);
+		logger.logInfo("Request body  : " + requestBody);
+
 
         HTTPRequest req = new HTTPRequest(HTTPMethods.PUT, "/clusters/"+clusterName+"/hosts/"+hostName+"/host_components/"+hostComponent);
         req.setBody(new HTTPBody(requestBody));
@@ -77,9 +95,16 @@ public class Host extends AmbariItems{
 
     public void waitForServiceCompletion(String serviceStatusAPIUrl){
         //ToDo Move the counter to config file
-        int counter = 10;
-        int interval = 1000*60;
-
+        int counter = 0;
+		try {
+			counter = conf.getInt(ConfigProperties.POLLING_COUNTER.getKey());
+		} catch (Exception e) {
+			logger.logError(e.getCause().toString());
+		}
+		
+		logger.logDebug("Polling Counter:" +counter);
+        int interval = 1000*60; //in milli seconds
+        
         while(counter-- > 0){
             if(getServiceStatus(serviceStatusAPIUrl).equals("COMPLETED"))
                 break;
@@ -103,4 +128,12 @@ public class Host extends AmbariItems{
     public String getHealthState(){
         return hostJson.getHosts().getHost_state();
     }
+    
+    public HostJson getHostJson() {
+		return hostJson;
+	}
+
+	public void setHostJson(HostJson hostJson) {
+		this.hostJson = hostJson;
+	}
 }

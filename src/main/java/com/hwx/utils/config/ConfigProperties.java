@@ -16,7 +16,8 @@ public enum ConfigProperties {
 	CONSOLE_LOGGING_ENABLED("console.logging.enabled"),
 	LOGGING_LEVEL_MODE("logging.level.mode"),
 	AMBARI_ADMIN_USER("ambari.admin.user"),
-	AMBARI_ADMIN_PASSWORD("ambari.admin.password");
+	AMBARI_ADMIN_PASSWORD("ambari.admin.password"),
+	POLLING_COUNTER("polling.counter");
 	
 	private final String key;
 

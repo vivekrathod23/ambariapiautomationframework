@@ -1,0 +1,13 @@
+{
+  "RequestInfo": 
+  	{
+  	"context" :"Start {SERVICE} via REST"
+  	}, 
+   "Body": 
+    {
+     	  "ServiceInfo": 
+        	{
+        		"state": "{STATUS}"
+            }
+     }
+}
