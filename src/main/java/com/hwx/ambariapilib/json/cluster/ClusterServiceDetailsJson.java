@@ -1,7 +1,8 @@
 package com.hwx.ambariapilib.json.cluster;
 
-import com.hwx.ambariapilib.json.common.AlertSummaryJson;
-import com.hwx.ambariapilib.json.common.AlertsJson;
+import com.hwx.ambariapilib.json.alert.AlertSummaryJson;
+import com.hwx.ambariapilib.json.alert.AlertListJson;
+import com.hwx.ambariapilib.json.common.ArtifactJson;
 import com.hwx.ambariapilib.json.host.ComponentsJson;
 import com.hwx.ambariapilib.json.service.ServiceInfoJson;
 
@@ -12,7 +13,7 @@ public class ClusterServiceDetailsJson {
     private String href;
     private ServiceInfoJson ServiceInfo;
     private AlertSummaryJson alertSummary;
-    private AlertsJson[] alerts;
+    private AlertListJson[] alerts;
     private ComponentsJson[] components;
     private ArtifactJson[] artifacts;
 
@@ -40,11 +41,11 @@ public class ClusterServiceDetailsJson {
         this.alertSummary = alertSummary;
     }
 
-    public AlertsJson[] getAlerts() {
+    public AlertListJson[] getAlerts() {
         return alerts;
     }
 
-    public void setAlerts(AlertsJson[] alerts) {
+    public void setAlerts(AlertListJson[] alerts) {
         this.alerts = alerts;
     }
 

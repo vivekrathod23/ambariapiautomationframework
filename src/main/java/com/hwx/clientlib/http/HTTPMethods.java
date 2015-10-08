@@ -7,5 +7,6 @@ package com.hwx.clientlib.http;
 public enum HTTPMethods {
     GET,
     POST,
-    PUT
+    PUT,
+    DELETE
 }

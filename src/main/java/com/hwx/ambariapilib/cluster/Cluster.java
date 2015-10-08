@@ -1,101 +1,147 @@
 package com.hwx.ambariapilib.cluster;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.google.gson.Gson;
 import com.hwx.ambariapilib.AmbariItems;
+import com.hwx.ambariapilib.common.Request;
 import com.hwx.ambariapilib.host.Host;
-import com.hwx.ambariapilib.json.cluster.ClusterHostsListJson;
 import com.hwx.ambariapilib.json.cluster.ClusterJson;
-import com.hwx.ambariapilib.json.cluster.ClusterServicesListJson;
-import com.hwx.ambariapilib.json.cluster.RequestJson;
-import com.hwx.ambariapilib.json.host.HostsJson;
+import com.hwx.ambariapilib.json.common.RequestListJson;
 import com.hwx.ambariapilib.json.service.ServiceJson;
+import com.hwx.ambariapilib.json.service.ServiceRequestJson;
+import com.hwx.ambariapilib.json.view.ViewsListJson;
 import com.hwx.ambariapilib.service.Service;
+import com.hwx.ambariapilib.view.View;
 import com.hwx.clientlib.http.HTTPBody;
 import com.hwx.clientlib.http.HTTPMethods;
 import com.hwx.clientlib.http.HTTPRequest;
 import com.hwx.clientlib.http.HTTPResponse;
 import com.hwx.utils.FileUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by ajain on 9/23/15.
  */
 public class Cluster extends AmbariItems {
 
-    private String clusterName;
-    private String version;
-    private Host[] hosts;
-
     private ClusterJson clusterJson;
-
-    
 
     private Cluster() {
         super();
     }
 
-    public Cluster(String clusterName , String version) {
-        this();
-        this.clusterName = clusterName;
-        this.version = version;
-
-        HTTPRequest req = new HTTPRequest(HTTPMethods.GET, "/clusters/"+clusterName);
+    public Cluster(String clusterAPIUrl){
+        HTTPRequest req = new HTTPRequest(HTTPMethods.GET, clusterAPIUrl);
         HTTPResponse resp = rc.sendHTTPRequest(req);
 
         clusterJson = gson.fromJson(resp.getBody().getBodyText(), ClusterJson.class);
     }
 
 
+    /* ==================================================================================
+                                Getters and Setters Methods
+       ================================================================================== */
+
+    public ClusterJson getClusterJson() {
+        return clusterJson;
+    }
+
+    public void setClusterJson(ClusterJson clusterJson) {
+        this.clusterJson = clusterJson;
+    }
+
+
+    /* ==================================================================================
+                                Cluster Functionality Methods
+       ================================================================================== */
+
+    //Get all the Hosts inside the cluster
+    public ArrayList<Host> getHosts(){
+        ArrayList<Host> hosts = new ArrayList<Host>();
+
+        int numHosts = clusterJson.getClusters().getTotal_hosts();
+
+        for(int i=0;i<numHosts;i++)
+            hosts.add(new Host(clusterJson.getHosts()[i].getHref()));
+
+        return hosts;
+    }
+
     //Get all the services inside the cluster
     public ArrayList<Service> getServices(){
         ArrayList<Service> services = new ArrayList<Service>();
 
-        HTTPRequest req = new HTTPRequest(HTTPMethods.GET, "/clusters/"+clusterName+"/services");
-        HTTPResponse resp = rc.sendHTTPRequest(req);
-
-
-
-        ClusterServicesListJson clusterServicesListJson = gson.fromJson(resp.getBody().getBodyText(), ClusterServicesListJson.class);
-
         //Get the count of services in cluster
-        int numServices = clusterServicesListJson.getItems().length;
+        int numServices = clusterJson.getServices().length;
 
         for(int i=0;i<numServices;i++)
-            services.add(new Service(clusterServicesListJson.getItems()[i].getHref()));
+            services.add(new Service(clusterJson.getServices()[i].getHref()));
 
         return services;
     }
-    
-    //Get all the Hosts inside the cluster
-    public ArrayList<Host> getAllHosts(){
-        ArrayList<Host> hosts = new ArrayList<Host>();
 
-        HTTPRequest req = new HTTPRequest(HTTPMethods.GET, "/clusters/"+clusterName+"/hosts");
+    //Get all views
+    public ArrayList<View> getViews(){
+        ArrayList<View> views = new ArrayList<View>();
+
+        HTTPRequest req = new HTTPRequest(HTTPMethods.GET, "/views");
         HTTPResponse resp = rc.sendHTTPRequest(req);
-        
-        ClusterHostsListJson clusterHostsListJson = gson.fromJson(resp.getBody().getBodyText(), ClusterHostsListJson.class);
 
-        //Get the count of items
-        int numItems = clusterHostsListJson.getItems().length;
+        ViewsListJson viewJson = gson.fromJson(resp.getBody().getBodyText(), ViewsListJson.class);
 
-        for(int i=0;i<numItems;i++) {
-        	hosts.add(new Host(clusterHostsListJson.getItems()[i].getHref()));
-        }
-        
-        return hosts;
+        int numViews = viewJson.getItems().length;
 
+        //Iterate for all views
+        for(int i=0;i<numViews;i++)
+            views.add(new View(viewJson.getItems()[i].getHref()));
+
+        return views;
     }
+
+
+    //Get all requests inside cluster
+    public ArrayList<Request> getRequests(){
+        String clusterName = clusterJson.getClusters().getCluster_name();
+
+        ArrayList<Request> requests = new ArrayList<Request>();
+
+        HTTPRequest req = new HTTPRequest(HTTPMethods.GET, "/clusters/"+clusterName+"/requests");
+        HTTPResponse resp = rc.sendHTTPRequest(req);
+
+        RequestListJson requestListJson = gson.fromJson(resp.getBody().getBodyText(), RequestListJson.class);
+
+        int numRequests = requestListJson.getItems().length;
+
+        for(int i=0;i<numRequests;i++)
+            requests.add(new Request(requestListJson.getItems()[i].getHref()));
+
+        return requests;
+    }
+
 
     //Create a new service inside the cluster
     public HTTPResponse createServices(String serviceName){
+        String clusterName = clusterJson.getClusters().getCluster_name();
+
         HTTPRequest req = new HTTPRequest(HTTPMethods.POST, "/clusters/"+clusterName+"/services/"+serviceName);
         HTTPResponse resp = rc.sendHTTPRequest(req);
 
         return resp;
     }
+
+    //Add a new host in cluster
+    //Host must be registered inside cluster
+    public void createHost(String hostName){
+        String clusterName = clusterJson.getClusters().getCluster_name();
+
+        HTTPRequest req = new HTTPRequest(HTTPMethods.POST, "/clusters/"+clusterName+"/hosts/"+hostName);
+        HTTPResponse resp = rc.sendHTTPRequest(req);
+    }
+
+
 
     //Start the service
     public void startService(String serviceName){
@@ -110,6 +156,8 @@ public class Cluster extends AmbariItems {
 
     //Update all the services
     public HTTPResponse updateAllServices(String status){
+        String clusterName = clusterJson.getClusters().getCluster_name();
+
     	Map<String, String> map = new HashMap<String, String>();
 		map.put("{STATUS}", status);
 		logger.logDebug("Status: " +status);
@@ -135,74 +183,9 @@ public class Cluster extends AmbariItems {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    public String getClusterName() {
-        return clusterName;
-    }
-
-    public void setClusterName(String clusterName) {
-        this.clusterName = clusterName;
-    }
-
-    public Host[] getHosts(){
-        HTTPRequest req = new HTTPRequest(HTTPMethods.GET, "/clusters/"+clusterName);
-        HTTPResponse resp = rc.sendHTTPRequest(req);
-
-//        //ToDo Add cluster related classes
-//        JsonPath path = new JsonPath(resp.getBody().getBodyText());
-//        List<String> hostNameList = path.getList("hosts.Hosts.host_name");
-//
-//        hosts = new Host[hostNameList.size()];
-//
-//        for(int i=0;i<hostNameList.size();i++)
-//            hosts[i] = new Host(clusterName,hostNameList.get(i));
-
-        Gson gson = new Gson();
-        ClusterJson clusterJson = gson.fromJson(resp.getBody().getBodyText(), ClusterJson.class);
-
-        logger.logInfo("Request : " +req.getUrl());
-        logger.logInfo("Response body : " +resp.getBody().getBodyText());
-
-        hosts = new Host[clusterJson.getClusters().getTotal_hosts()];
-
-        for(int i=0;i<hosts.length;i++)
-            hosts[i] = new Host(clusterName,clusterJson.getHosts()[i].getHosts().getHost_name());
-
-        return hosts;
-    }
-    
-
-    public void addHost(String hostName){
-        HTTPRequest req = new HTTPRequest(HTTPMethods.POST, "/clusters/"+clusterName+"/hosts/"+hostName);
-        HTTPResponse resp = rc.sendHTTPRequest(req);
-
-        System.out.println(resp.getBody().getBodyText());
-    }
-
-
-
+    //Chnage the service status
     private void updateServiceStatus(String serviceName, String status) {
-    	
+        String clusterName = clusterJson.getClusters().getCluster_name();
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("{SERVICE}", serviceName);
 		map.put("{STATUS}", status);
@@ -226,19 +209,7 @@ public class Cluster extends AmbariItems {
 		waitForServiceCompletion(serviceUrl);
     }
 
-    public String getServiceStatus(String serviceStatusAPIUrl){
-        //Generate the GET request to get the status of service
-        HTTPRequest req = new HTTPRequest(HTTPMethods.GET, serviceStatusAPIUrl);
-        HTTPResponse resp = rc.sendHTTPRequest(req);
-
-        //Extract service status from returned JSON
-        Gson gson = new Gson();
-        RequestJson requestJson = gson.fromJson(resp.getBody().getBodyText(), RequestJson.class);
-        String requestStatus = requestJson.getRequests().getRequest_status();
-
-        return requestStatus;
-    }
-
+    //Wait for service to complete
     public void waitForServiceCompletion(String serviceStatusAPIUrl){
         //ToDo Move the counter to config file
         int counter = 10;
@@ -251,6 +222,21 @@ public class Cluster extends AmbariItems {
             waitForFixedInterval(interval);
         }
     }
+
+    public String getServiceStatus(String serviceStatusAPIUrl){
+        //Generate the GET request to get the status of service
+        HTTPRequest req = new HTTPRequest(HTTPMethods.GET, serviceStatusAPIUrl);
+        HTTPResponse resp = rc.sendHTTPRequest(req);
+
+        //Extract service status from returned JSON
+        Gson gson = new Gson();
+        ServiceRequestJson requestJson = gson.fromJson(resp.getBody().getBodyText(), ServiceRequestJson.class);
+        String requestStatus = requestJson.getRequests().getRequest_status();
+
+        return requestStatus;
+    }
+
+
 
     //ToDo Move to Utils + Add exception
     public void waitForFixedInterval(int waitTime){

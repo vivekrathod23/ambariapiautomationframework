@@ -1,14 +1,14 @@
 package com.hwx;
 
-import java.util.Date;
-
+import com.hwx.ambariapilib.AmbariManager;
+import com.hwx.ambariapilib.host.Host;
+import com.hwx.utils.logging.LogManager;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.hwx.ambariapilib.AmbariManager;
-import com.hwx.ambariapilib.host.Host;
-import com.hwx.utils.logging.LogManager;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by ajain on 9/11/15.
@@ -26,11 +26,11 @@ public class DemoTest {
 
     @Test
     public void testHostState(){
-        Host[] hosts = ambariManager.getClusters().get(0).getHosts();
+        ArrayList<Host> hosts = ambariManager.getClusters().get(0).getHosts();
 
-        for(int i=0;i<hosts.length;i++){
-            logger.logInfo("Host : "+hosts[i]+" State : "+hosts[i].getHealthState());
-            Assert.assertEquals(hosts[i].getHealthState(), "HEALTHY");
+        for(int i=0;i<hosts.size();i++){
+            logger.logInfo("Host : "+hosts.get(i)+" State : "+hosts.get(i).getHealthState());
+            Assert.assertEquals(hosts.get(i).getHealthState(), "HEALTHY");
         }
     }
 
@@ -58,7 +58,7 @@ public class DemoTest {
 
     @Test
     public void testAddHost(){
-    	ambariManager.getClusters().get(0).addHost("c6403.ambari.apache.org");
+    	ambariManager.getClusters().get(0).createHost("c6404.ambari.apache.org");
     }
 
     @Test
@@ -90,10 +90,52 @@ public class DemoTest {
     public void testStopAllServices(){
     	ambariManager.getClusters().get(0).stopAllServices();
     }
+
     
     @Test
     public void testHosts(){
-    	logger.logInfo(ambariManager.getClusters().get(0).getAllHosts().get(0).getHostJson().getHosts().getHost_name());
+    	logger.logInfo(ambariManager.getClusters().get(0).getHosts().get(0).getHostJson().getHosts().getHost_name());
     }
-    
+
+
+
+    @Test
+    public void testViews(){
+
+        for(int i=0;i<ambariManager.getClusters().get(0).getViews().size();i++)
+        System.out.println(ambariManager.getClusters().get(0).getViews().get(i).getViewJson().getViewInfo().getView_name());
+    }
+    @Test
+    public void testViewsVersions(){
+
+        for(int i=0;i<ambariManager.getClusters().get(0).getViews().get(0).getViewVersions().size();i++)
+            System.out.println(ambariManager.getClusters().get(0).getViews().get(0).getViewVersions().get(i).getViewVersionJson().getViewVersionInfo().getVersion());
+    }
+
+    @Test
+    public void testViewInstances(){
+
+        for(int i=0;i<ambariManager.getClusters().get(0).getViews().get(0).getViewVersions().get(0).getViewInstances().size();i++)
+            System.out.println(ambariManager.getClusters().get(0).getViews().get(0).getViewVersions().get(0).getViewInstances().get(i).getViewLongInstanceJson().getViewInstanceInfo().getInstance_name());
+    }
+
+    @Test
+    public void testCreateViewInstances(){
+        ambariManager.getClusters().get(0).getViews().get(0).getViewVersions().get(0).createInstance("NewInstance");
+    }
+
+    @Test
+    public void testCreateCluster(){
+        ambariManager.createCluster("test");
+    }
+
+    @Test
+    public void testServiceComponents(){
+        ambariManager.getClusters().get(0).getServices().get(0).getServiceComponents();
+    }
+
+    @Test
+    public void testCreateComponent(){
+        ambariManager.getClusters().get(0).getServices().get(0).createComponent("TestComponent");
+    }
 }

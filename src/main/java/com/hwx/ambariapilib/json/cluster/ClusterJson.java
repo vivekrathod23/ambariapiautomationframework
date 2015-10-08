@@ -1,30 +1,31 @@
 package com.hwx.ambariapilib.json.cluster;
 
-import com.hwx.ambariapilib.json.common.AlertDefinitionsJson;
-import com.hwx.ambariapilib.json.common.AlertSummaryJson;
-import com.hwx.ambariapilib.json.common.AlertsJson;
-import com.hwx.ambariapilib.json.host.ClusterHostsJson;
-import com.hwx.ambariapilib.service.Request;
+import com.hwx.ambariapilib.json.alert.AlertDefinitionListJson;
+import com.hwx.ambariapilib.json.alert.AlertListJson;
+import com.hwx.ambariapilib.json.alert.AlertSummaryJson;
+import com.hwx.ambariapilib.json.common.ArtifactJson;
+import com.hwx.ambariapilib.json.common.Workflow;
+import com.hwx.ambariapilib.json.service.ServiceConfigVersion;
 
 /**
  * Created by ajain on 9/30/15.
  */
 public class ClusterJson {
     private String href;
-    private ClustersJson Clusters;
+    private ClusterDetailsJson Clusters;
     private AlertSummaryJson alerts_summary;
     private AlertSummaryJson alerts_summary_hosts;
-    private AlertsJson[] alerts;
+    private AlertListJson[] alerts;
     private PrivilegeJson[] privileges;
     private ConfigGroupJson[] config_groups;
-    private StackVersion[] stack_versions;
-    private ClusterHostsJson[] hosts;
-    private ConfigurationJson[] configurations;
+    private ClusterStackVersionListJson[] stack_versions;
+    private ClusterHostsListJson[] hosts;
+    private ClusterConfigurationListJson[] configurations;
     private ServiceConfigVersion[] service_config_versions;
-    private AlertDefinitionsJson[] alert_definitions;
-    private Request[] requests;
+    private AlertDefinitionListJson[] alert_definitions;
+    private ClusterRequestListJson[] requests;
     private Workflow[] workflows;
-    private Service[] services;
+    private ClusterServiceListJson[] services;
     private ArtifactJson[] artifacts;
 
     public String getHref() {
@@ -35,11 +36,11 @@ public class ClusterJson {
         this.href = href;
     }
 
-    public ClustersJson getClusters() {
+    public ClusterDetailsJson getClusters() {
         return Clusters;
     }
 
-    public void setClusters(ClustersJson clusters) {
+    public void setClusters(ClusterDetailsJson clusters) {
         Clusters = clusters;
     }
 
@@ -59,11 +60,11 @@ public class ClusterJson {
         this.alerts_summary_hosts = alerts_summary_hosts;
     }
 
-    public AlertsJson[] getAlerts() {
+    public AlertListJson[] getAlerts() {
         return alerts;
     }
 
-    public void setAlerts(AlertsJson[] alerts) {
+    public void setAlerts(AlertListJson[] alerts) {
         this.alerts = alerts;
     }
 
@@ -83,27 +84,27 @@ public class ClusterJson {
         this.config_groups = config_groups;
     }
 
-    public StackVersion[] getStack_versions() {
+    public ClusterStackVersionListJson[] getStack_versions() {
         return stack_versions;
     }
 
-    public void setStack_versions(StackVersion[] stack_versions) {
+    public void setStack_versions(ClusterStackVersionListJson[] stack_versions) {
         this.stack_versions = stack_versions;
     }
 
-    public ClusterHostsJson[] getHosts() {
+    public ClusterHostsListJson[] getHosts() {
         return hosts;
     }
 
-    public void setHosts(ClusterHostsJson[] hosts) {
+    public void setHosts(ClusterHostsListJson[] hosts) {
         this.hosts = hosts;
     }
 
-    public ConfigurationJson[] getConfigurations() {
+    public ClusterConfigurationListJson[] getConfigurations() {
         return configurations;
     }
 
-    public void setConfigurations(ConfigurationJson[] configurations) {
+    public void setConfigurations(ClusterConfigurationListJson[] configurations) {
         this.configurations = configurations;
     }
 
@@ -115,19 +116,19 @@ public class ClusterJson {
         this.service_config_versions = service_config_versions;
     }
 
-    public AlertDefinitionsJson[] getAlert_definitions() {
+    public AlertDefinitionListJson[] getAlert_definitions() {
         return alert_definitions;
     }
 
-    public void setAlert_definitions(AlertDefinitionsJson[] alert_definitions) {
+    public void setAlert_definitions(AlertDefinitionListJson[] alert_definitions) {
         this.alert_definitions = alert_definitions;
     }
 
-    public Request[] getRequests() {
+    public ClusterRequestListJson[] getRequests() {
         return requests;
     }
 
-    public void setRequests(Request[] requests) {
+    public void setRequests(ClusterRequestListJson[] requests) {
         this.requests = requests;
     }
 
@@ -139,11 +140,11 @@ public class ClusterJson {
         this.workflows = workflows;
     }
 
-    public Service[] getServices() {
+    public ClusterServiceListJson[] getServices() {
         return services;
     }
 
-    public void setServices(Service[] services) {
+    public void setServices(ClusterServiceListJson[] services) {
         this.services = services;
     }
 

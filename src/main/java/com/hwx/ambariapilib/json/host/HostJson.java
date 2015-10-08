@@ -1,7 +1,7 @@
 package com.hwx.ambariapilib.json.host;
 
-import com.hwx.ambariapilib.json.common.AlertSummaryJson;
-import com.hwx.ambariapilib.json.common.AlertsJson;
+import com.hwx.ambariapilib.json.alert.AlertSummaryJson;
+import com.hwx.ambariapilib.json.alert.AlertListJson;
 import com.hwx.ambariapilib.json.service.KerberosIdentitiesJson;
 
 /**
@@ -9,12 +9,12 @@ import com.hwx.ambariapilib.json.service.KerberosIdentitiesJson;
  */
 public class HostJson {
     private String href;
-    private HostsJson Hosts;
+    private HostDetailJson Hosts;
     private AlertSummaryJson alerts_summary;
     private KerberosIdentitiesJson[] kerberos_identities;
-    private AlertsJson[] alerts;
-    private StackVersions[] stack_versions;
-    private HostComponentsJson[] host_components;
+    private AlertListJson[] alerts;
+    private HostStackVersionList[] stack_versions;
+    private HostComponentJson[] host_components;
 
     public String getHref() {
         return href;
@@ -24,11 +24,11 @@ public class HostJson {
         this.href = href;
     }
 
-    public HostsJson getHosts() {
+    public HostDetailJson getHosts() {
         return Hosts;
     }
 
-    public void setHosts(HostsJson hosts) {
+    public void setHosts(HostDetailJson hosts) {
         Hosts = hosts;
     }
 
@@ -48,27 +48,27 @@ public class HostJson {
         this.kerberos_identities = kerberos_identities;
     }
 
-    public AlertsJson[] getAlerts() {
+    public AlertListJson[] getAlerts() {
         return alerts;
     }
 
-    public void setAlerts(AlertsJson[] alerts) {
+    public void setAlerts(AlertListJson[] alerts) {
         this.alerts = alerts;
     }
 
-    public StackVersions[] getStack_versions() {
+    public HostStackVersionList[] getStack_versions() {
         return stack_versions;
     }
 
-    public void setStack_versions(StackVersions[] stack_versions) {
+    public void setStack_versions(HostStackVersionList[] stack_versions) {
         this.stack_versions = stack_versions;
     }
 
-    public HostComponentsJson[] getHost_components() {
+    public HostComponentJson[] getHost_components() {
         return host_components;
     }
 
-    public void setHost_components(HostComponentsJson[] host_components) {
+    public void setHost_components(HostComponentJson[] host_components) {
         this.host_components = host_components;
     }
 }

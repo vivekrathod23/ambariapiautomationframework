@@ -1,11 +1,9 @@
-package com.hwx.ambariapilib.json.host;
-
-import com.hwx.ambariapilib.json.service.ServiceComponentShortInfoJson;
+package com.hwx.ambariapilib.json.service;
 
 /**
- * Created by ajain on 10/5/15.
+ * Created by ajain on 10/7/15.
  */
-public class ComponentsJson {
+public class ServiceComponentItemJson {
     private String href;
     private ServiceComponentShortInfoJson ServiceComponentInfo;
 
