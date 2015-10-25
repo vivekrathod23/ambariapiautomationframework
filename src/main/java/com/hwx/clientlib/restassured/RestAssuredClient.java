@@ -326,7 +326,9 @@ public class RestAssuredClient extends RestAPIClient {
      * @return com.hwx.clientlib.http.HTTPResponse
      */
     private HTTPResponse toHTTPResponse(Response resp){
-//        System.out.println("Response : "+resp.body().asString());
-        return new HTTPResponse(resp.body().asString());
+        HTTPResponse resp = new HTTPResponse(resp.body().asString());
+        resp.setStatusCode(resp.getStatusCode());
+
+        return resp;
     }
 }

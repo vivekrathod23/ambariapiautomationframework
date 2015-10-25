@@ -138,4 +138,24 @@ public class DemoTest {
     public void testCreateComponent(){
         ambariManager.getClusters().get(0).getServices().get(0).createComponent("TestComponent");
     }
+
+    @Test
+    public void testStackVersion(){
+        System.out.println(ambariManager.getClusters().get(0).getStackVersions().get(0).getStackVersionDetailJson().getHref());
+    }
+
+    @Test
+    public void testRegisteredVersion(){
+        ambariManager.getClusters().get(0).registerNewVersion();
+    }
+
+    @Test
+    public void testInstallPackageRequest(){
+        ambariManager.getClusters().get(0).submitInstallPackageRequest();
+    }
+
+    @Test
+    public void testMonitorInstallPackage(){
+        ambariManager.getClusters().get(0).monitorInstallPackageRequest(143);
+    }
 }
