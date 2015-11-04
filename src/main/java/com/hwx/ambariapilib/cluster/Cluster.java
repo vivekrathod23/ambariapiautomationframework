@@ -141,19 +141,23 @@ public class Cluster extends AmbariItems {
 
 
     //Register a new version
-    public boolean registerNewVersion(){//String stackName,String stackVersion, String buildNumber, String operatingSystem, String hdpBaseUrl, String hdpUtilsBaseUrl){
-        Map<String,String> map = new HashMap<>();
-
-        //Add the key value in map.
-        //ToDo Update the json file along with code for map
+    public boolean registerNewVersion(String stackName, String stackVersion, String buildNumber, String operatingSystem, String hdpBaseUrl, String hdpUtilsBaseUrl){
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("{STACKNAME}",stackName);
+        map.put("{STACKVERSION}",stackVersion);
+        map.put("{BUILDNUMBER}",buildNumber);
+        map.put("{OPERATINGSYSTEM}",operatingSystem);
+        map.put("{HDPBASEURL}",hdpBaseUrl);
+        map.put("{HDPUTILBASEURL}",hdpUtilsBaseUrl);
 
 
         String body = FileUtils.getJsonAsString("UpgradeVersion.json",map);
+        //ToDo Change the stack version to be a parameter
         HTTPRequest req = new HTTPRequest(HTTPMethods.POST, "/stacks/HDP/versions/2.3/repository_versions/");
         req.setBody(new HTTPBody(body));
         HTTPResponse resp = rc.sendHTTPRequest(req);
 
-        if(resp.getStatusCode() != 200){
+        if(resp.getStatusCode() != 201){
             System.out.println(resp.getBody().getBodyText());
             return false;
         }
@@ -179,27 +183,49 @@ public class Cluster extends AmbariItems {
 
 
     //Submit the install
-    public void submitInstallPackageRequest(){
-        Map<String,String> map = new HashMap<>();
+    public void submitInstallPackageRequest(String stackName, String stackVersion, String buildNumber){
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("{STACKNAME}",stackName);
+        map.put("{STACKVERSION}",stackVersion);
+        map.put("{BUILDNUMBER}",buildNumber);
 
-        String body = FileUtils.getJsonAsString("InstallPackageRequest.json",map);
+        String body = FileUtils.getJsonAsString("InstallPackageRequest.json", map);
         HTTPRequest req = new HTTPRequest(HTTPMethods.POST, clusterJson.getHref()+"/stack_versions");
         req.setBody(new HTTPBody(body));
         HTTPResponse resp = rc.sendHTTPRequest(req);
+
+        if(resp.getStatusCode() != 202){
+            //Throw Exception
+        }
+        else{
+            //Parse the json
+            //Get the request status
+
+        }
+
 
         System.out.println(resp.getBody());
     }
 
     //Monitor the install package request
     public void monitorInstallPackageRequest(int requestId){
-        Request req = new Request(clusterJson.getHref()+"/requests/"+requestId);
+        Request req = new Request(clusterJson.getHref()+"/requests/"+requestId);;
+
+
+
+        while(req.getRequestDetailJson().getRequests().getRequest_status()!="COMPLETED"){
+            try {
+                Thread.sleep(1 * 60 * 1000);
+            }catch(Exception e){}
+            req = new Request(clusterJson.getHref()+"/requests/"+requestId);
+        }
         //ToDo Read request Response??
-        System.out.println(req.getRequestDetailJson().getRequests().getCompleted_task_count());
+//        System.out.println(req.getRequestDetailJson().getRequests().getCompleted_task_count());
     }
 
    //Check the pre-requisite for upgrade
     public  ArrayList<StackUpgradeCheckJson>  checkForPreRequisiteForUpgrade(int repoVersion, String upgradeType){
-        ArrayList<StackUpgradeCheckJson> stackUpgradeCheckJsonList = new ArrayList<>();
+        ArrayList<StackUpgradeCheckJson> stackUpgradeCheckJsonList = new ArrayList<StackUpgradeCheckJson>();
 
         HTTPRequest req = new HTTPRequest(HTTPMethods.GET, clusterJson.getHref()+"/rolling_upgrades_check?fields=*&UpgradeChecks/repository_version="+repoVersion+"/&UpgradeChecks/upgrade_type="+upgradeType);
         HTTPResponse resp = rc.sendHTTPRequest(req);
@@ -217,7 +243,7 @@ public class Cluster extends AmbariItems {
 
     //Submit rolling upgrade
     public void submitRollingUpgrade(){
-        Map<String,String> map = new HashMap<>();
+        Map<String,String> map = new HashMap<String,String>();
         String body = FileUtils.getJsonAsString("UpgradeRequest.json",map);
         HTTPRequest req = new HTTPRequest(HTTPMethods.POST, clusterJson.getHref()+"/upgrades");
         req.setBody(new HTTPBody(body));

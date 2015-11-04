@@ -149,8 +149,13 @@ public class Host extends AmbariItems{
         return hostJson.getHosts().getHost_status();
     }
 
-    public String getHealthState(){
+    public String getHealthState()
+    {
         return hostJson.getHosts().getHost_state();
     }
+
+    public String getName() {
+        return hostJson.getHosts().getHost_name();
+        }
 
 }
