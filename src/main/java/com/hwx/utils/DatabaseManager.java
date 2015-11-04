@@ -27,8 +27,7 @@ public class DatabaseManager {
 	        } catch (SQLException e) {
 	            e.printStackTrace();
 	        }
-	        if (connection == null) return false;
-	        else return true;
+			return connection != null;
 	    }
 
 	    public void closeConnection() {

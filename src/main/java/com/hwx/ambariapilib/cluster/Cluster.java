@@ -141,7 +141,7 @@ public class Cluster extends AmbariItems {
 
 
     //Register a new version
-    public void registerNewVersion(String stackName,String stackVersion, String buildNumber, String operatingSystem, String hdpBaseUrl, String hdpUtilsBaseUrl){
+    public boolean registerNewVersion(){//String stackName,String stackVersion, String buildNumber, String operatingSystem, String hdpBaseUrl, String hdpUtilsBaseUrl){
         Map<String,String> map = new HashMap<>();
 
         //Add the key value in map.
@@ -153,7 +153,12 @@ public class Cluster extends AmbariItems {
         req.setBody(new HTTPBody(body));
         HTTPResponse resp = rc.sendHTTPRequest(req);
 
-        //ToDo Check for status code
+        if(resp.getStatusCode() != 200){
+            System.out.println(resp.getBody().getBodyText());
+            return false;
+        }
+        else
+            return true;
     }
 
     //Get the stack versions inside cluster
@@ -212,7 +217,8 @@ public class Cluster extends AmbariItems {
 
     //Submit rolling upgrade
     public void submitRollingUpgrade(){
-        String body = FileUtils.getJsonAsString();
+        Map<String,String> map = new HashMap<>();
+        String body = FileUtils.getJsonAsString("UpgradeRequest.json",map);
         HTTPRequest req = new HTTPRequest(HTTPMethods.POST, clusterJson.getHref()+"/upgrades");
         req.setBody(new HTTPBody(body));
         HTTPResponse resp = rc.sendHTTPRequest(req);

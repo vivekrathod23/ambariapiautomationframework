@@ -158,4 +158,9 @@ public class DemoTest {
     public void testMonitorInstallPackage(){
         ambariManager.getClusters().get(0).monitorInstallPackageRequest(143);
     }
+
+    @Test
+    public void testSubmitExpressUpgrade(){
+        ambariManager.getClusters().get(0).submitRollingUpgrade();
+    }
 }

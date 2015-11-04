@@ -124,8 +124,26 @@ public class RestAssuredClient extends RestAPIClient {
      * @return
      */
     public HTTPResponse doPost(HTTPRequest req){
-        return doPost(req.getUrl());
+
+        if(req.getBody().getBodyText().length() > 0)
+            return doPost(req.getUrl(), req.getBody().getBodyText());
+        else
+            return doPost(req.getUrl());
+
+//        return doPost(req.getUrl());
     }
+
+
+    /**
+     * Sends the HTTP POST request to server
+     * @param req
+     * @return
+     */
+
+    public HTTPResponse doPost(String url,String bodyText){
+        return toHTTPResponse(sendPostRequest(url,bodyText));
+    }
+
 
     /**
      * Sends the HTTP PUT request to server
@@ -170,12 +188,42 @@ public class RestAssuredClient extends RestAPIClient {
         }
         else
             urlPath = path;
-        	logger.logInfo("Request path : " +urlPath);
+        	logger.logInfo("Request path : " + urlPath);
 
         if(getSpec()==null)
             return given().body(bodyText).put(urlPath);
         else {
             Response resp = getSpec().header("X-Requested-By", "ambari").body(bodyText).put(urlPath);
+            logger.logInfo("Response body : " +resp.getBody().asString());
+            setSpec(given().auth().preemptive().basic(ambariAdminUserName, ambariAdminPassword).when());
+            return resp;
+        }
+    }
+
+
+    /**
+     * Sends the HTTP POST request to server
+     * @param req
+     * @return
+     */
+
+    private Response sendPostRequest(String path,String bodyText){
+
+        String urlPath;
+
+        //Create the complete path if given relative path or else use the complete path
+        if(path.startsWith("/")) {
+            setRelativePath(path);
+            urlPath = getURLString();
+        }
+        else
+            urlPath = path;
+        logger.logInfo("Request path : " +urlPath);
+
+        if(getSpec()==null)
+            return given().body(bodyText).post(urlPath);
+        else {
+            Response resp = getSpec().header("X-Requested-By", "ambari").body(bodyText).post(urlPath);
             logger.logInfo("Response body : " +resp.getBody().asString());
             setSpec(given().auth().preemptive().basic(ambariAdminUserName, ambariAdminPassword).when());
             return resp;
@@ -326,9 +374,9 @@ public class RestAssuredClient extends RestAPIClient {
      * @return com.hwx.clientlib.http.HTTPResponse
      */
     private HTTPResponse toHTTPResponse(Response resp){
-        HTTPResponse resp = new HTTPResponse(resp.body().asString());
-        resp.setStatusCode(resp.getStatusCode());
+        HTTPResponse response = new HTTPResponse(resp.body().asString());
+        response.setStatusCode(resp.getStatusCode());
 
-        return resp;
+        return response;
     }
 }

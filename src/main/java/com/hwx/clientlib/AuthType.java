@@ -5,6 +5,6 @@ package com.hwx.clientlib;
  */
 public enum AuthType {
 
-    BASIC;
+    BASIC
 
 }
