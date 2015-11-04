@@ -1,0 +1,29 @@
+{
+  "RepositoryVersions":{
+    "repository_version":"{STACKVERSION}.{BUILDNUMBER}",
+    "display_name":"{STACKNAME}"
+  },
+  "operating_systems":[
+    {
+      "OperatingSystems":{
+        "os_type":"{OPERATINGSYSTEM}"
+      },
+      "repositories":[
+        {
+          "Repositories":{
+            "repo_id":"HDP-{STACKVERSION}",
+            "repo_name":"HDP",
+            "base_url":"{HDPBASEURL}"
+          }
+        },
+        {
+          "Repositories":{
+            "repo_id":"HDP-UTILS-1.1.0.20",
+            "repo_name":"HDP-UTILS",
+            "base_url":"{HDPUTILBASEURL}"
+          }
+        }
+      ]
+    }
+  ]
+}

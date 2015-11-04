@@ -1,0 +1,11 @@
+{
+  "Upgrade":{
+    "repository_version":"2.3.4.0-3146",
+    "direction":"upgrade",
+    "skip_service_check_failures":"true",
+    "skip_failures":"true",
+    "skip_prerequisite_checks":"true",
+    "fail_on_check_warnings":"false",
+    "type":"NON_ROLLING"
+  }
+}

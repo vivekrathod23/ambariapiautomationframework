@@ -1,0 +1,7 @@
+{
+  "ClusterStackVersions":{
+    "stack":"{STACKNAME}",
+    "version":"{STACKVERSION}",
+    "repository_version":"{STACKVERSION}.{BUILDNUMBER}"
+  }
+}
