@@ -1,5 +1,5 @@
 package com.hwx.ambariapilib.cluster;
-
+// This class contains code for Cluster functionality
 
 import com.google.gson.Gson;
 import com.hwx.ambariapilib.AmbariItems;
