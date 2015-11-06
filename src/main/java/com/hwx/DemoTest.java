@@ -177,4 +177,47 @@ public class DemoTest {
         System.out.println("Hi");
 
     }
+
+    @Test
+    public void testGetLastPendingTask() throws Exception {
+        StackUpgrade stackUpgrade = ambariManager.getClusters().get(0).initializeStackUpgrade("express");
+        stackUpgrade.getLastPendingUpgradeItem();
+    }
+
+    @Test
+    public void testGetVariousItems() throws Exception {
+        StackUpgrade stackUpgrade = ambariManager.getClusters().get(0).initializeStackUpgrade("express");
+        stackUpgrade.getCompletedUpgradeItem();
+    }
+
+
+    @Test
+    public void testEndtoEndUpgrade() throws Exception {
+        StackUpgrade stackUpgrade = ambariManager.getClusters().get(0).initializeStackUpgrade("express");
+
+        //stackUpgrade.registerNewVersion("HDP-2.3.2.0", "2.3", "2.0", "redhat6", "http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.3.2.0", "http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.20/repos/centos6");
+        //stackUpgrade.submitInstallPackageRequest("HDP", "2.3", "2.0");
+        stackUpgrade.submitRollingUpgrade();
+
+        while(true) {
+            String status = stackUpgrade.getLastUpgradeStatus().getUpgrade().getRequest_status();
+            System.out.println("EU status:: " + status);
+            logger.logInfo("EU status:: " + status);
+            if(status.equalsIgnoreCase("COMPLETED"))
+                break;
+            Thread.sleep(60 * 1000);
+        }
+
+        System.out.println("EU complete");
+        logger.logInfo("EU complete");
+    }
+
+
+
+    @Test
+    public void testProceedAfterManualStep() throws Exception {
+        StackUpgrade stackUpgrade = ambariManager.getClusters().get(0).initializeStackUpgrade("express");
+        stackUpgrade.proceedUpgradeAfterManualVerification();
+    }
+
 }

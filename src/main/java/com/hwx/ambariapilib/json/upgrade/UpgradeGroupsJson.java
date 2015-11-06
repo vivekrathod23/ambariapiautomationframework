@@ -5,33 +5,18 @@ package com.hwx.ambariapilib.json.upgrade;
  */
 public class UpgradeGroupsJson {
     private String href;
-    private int group_id;
-    private int request_id;
+    private UpgradeGroupJson UpgradeGroup;
+    private UpgradeItemsJson[] upgrade_items;
 
     public String getHref() {
         return href;
     }
 
-    public void setHref(String href) {
-        this.href = href;
+    public UpgradeGroupJson getUpgradeGroup() {
+        return UpgradeGroup;
     }
 
-    public int getGroup_id() {
-        return group_id;
+    public UpgradeItemsJson[] getUpgrade_items() {
+        return upgrade_items;
     }
-
-    public void setGroup_id(int group_id) {
-        this.group_id = group_id;
-    }
-
-    public int getRequest_id() {
-        return request_id;
-    }
-
-    public void setRequest_id(int request_id) {
-        this.request_id = request_id;
-    }
-
-
-
 }

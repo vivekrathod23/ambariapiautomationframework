@@ -3,7 +3,7 @@ package com.hwx.ambariapilib.json.upgrade;
 /**
  * Created by vsharma on 11/5/15.
  */
-public class Items {
+public class ItemsJson {
     private String href;
     private UpgradeJson Upgrade;
 

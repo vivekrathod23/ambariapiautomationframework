@@ -5,7 +5,7 @@ package com.hwx.ambariapilib.json.upgrade;
  */
 public class UpgradeEntryJson {
     private String href;
-    private Items[] items;
+    private ItemsJson[] items;
 
     public String getHref() {
         return href;
@@ -15,11 +15,11 @@ public class UpgradeEntryJson {
         this.href = href;
     }
 
-    public Items[] getItems() {
+    public ItemsJson[] getItems() {
         return items;
     }
 
-    public void setItems(Items[] items) {
+    public void setItems(ItemsJson[] items) {
         this.items = items;
     }
 }

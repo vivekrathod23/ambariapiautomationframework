@@ -14,7 +14,7 @@ public class ConfigManager {
 	PropertiesConfiguration overrideConfig = null;
 	CompositeConfiguration config = new CompositeConfiguration();
 	String fileSeparator = System.getProperty("file.separator");
-	String baseFilePath = System.getProperty("user.dir") + fileSeparator + "src/resources" + fileSeparator;
+	String baseFilePath = System.getProperty("user.dir") + fileSeparator + "src" + fileSeparator + "resources" + fileSeparator;
 
 	private ConfigManager() {
 

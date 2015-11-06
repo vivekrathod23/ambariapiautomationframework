@@ -31,21 +31,21 @@ import com.jayway.restassured.response.Response;
  * This is REST API client implementation using Rest Assured Framework
  */
 public class RestAssuredClient extends RestAPIClient {
-	
+
     public ConfigManager conf = ConfigManager.getInstance();
     public LogManager logger = LogManager.getLoggerInstance(RestAssuredClient.class.getSimpleName());
-	
-	private String ambariAdminUserName ="";
-	private String ambariAdminPassword= "";
-	
+
+    private String ambariAdminUserName ="";
+    private String ambariAdminPassword= "";
+
     public RestAssuredClient(){
         super();
         try {
-			 ambariAdminUserName = conf.getString(ConfigProperties.AMBARI_ADMIN_USER.getKey());
-			 ambariAdminPassword = conf.getString(ConfigProperties.AMBARI_ADMIN_PASSWORD.getKey());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+            ambariAdminUserName = conf.getString(ConfigProperties.AMBARI_ADMIN_USER.getKey());
+            ambariAdminPassword = conf.getString(ConfigProperties.AMBARI_ADMIN_PASSWORD.getKey());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         RestAssured.registerParser("text/plain", com.jayway.restassured.parsing.Parser.JSON);
     }
 
@@ -66,7 +66,7 @@ public class RestAssuredClient extends RestAPIClient {
      * @return Base URL as string
      */
     public String getURLString(){
-       return getProtocol()+"://"+getHost()+":"+getPort()+getPath()+getRelativePath();
+        return getProtocol()+"://"+getHost()+":"+getPort()+getPath()+getRelativePath();
     }
 
     /**
@@ -178,7 +178,7 @@ public class RestAssuredClient extends RestAPIClient {
      */
 
     private Response sendPutRequest(String path,String bodyText){
-    	
+
         String urlPath;
 
         //Create the complete path if given relative path or else use the complete path
@@ -188,7 +188,7 @@ public class RestAssuredClient extends RestAPIClient {
         }
         else
             urlPath = path;
-        	logger.logInfo("Request path : " + urlPath);
+        logger.logInfo("Request path : " + urlPath);
 
         if(getSpec()==null)
             return given().body(bodyText).put(urlPath);
@@ -310,13 +310,13 @@ public class RestAssuredClient extends RestAPIClient {
 
 
         for(String validationKey : allValidations.keySet()){
-           try {
-               httpResponse.then().body(validationKey, hasItems(allValidations.get(validationKey)));
-           }
-           catch(Exception e) {
-               System.out.println("Error "+e.getMessage());
-               return false;    //In case any of validation fails
-           }
+            try {
+                httpResponse.then().body(validationKey, hasItems(allValidations.get(validationKey)));
+            }
+            catch(Exception e) {
+                System.out.println("Error "+e.getMessage());
+                return false;    //In case any of validation fails
+            }
         }
         return true;
     }
