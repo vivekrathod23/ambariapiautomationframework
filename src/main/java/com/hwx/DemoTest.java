@@ -146,12 +146,12 @@ public class DemoTest {
 
     @Test
     public void testRegisteredVersion(){
-        ambariManager.getClusters().get(0).registerNewVersion("HDP","2.3","3.0-3020","redhat6","http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos6/2.x/BUILDS/2.3.3.0-3020","http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.20/repos/centos6");
+        ambariManager.getClusters().get(0).registerNewVersion("HDP", "2.3", "3.0-3020", "redhat6", "http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos6/2.x/BUILDS/2.3.3.0-3020", "http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.20/repos/centos6");
     }
 
     @Test
     public void testInstallPackageRequest(){
-        ambariManager.getClusters().get(0).submitInstallPackageRequest("HDP","2.3","3.0-3020");
+        ambariManager.getClusters().get(0).submitInstallPackageRequest("HDP", "2.3", "3.0-3020");
     }
 
     @Test
@@ -160,7 +160,16 @@ public class DemoTest {
     }
 
     @Test
-    public void testSubmitExpressUpgrade(){
+    public void testSubmitExpressUpgrade()
+    {
+        ambariManager.getClusters().get(0).submitRollingUpgrade();
+    }
+
+    @Test
+    public void testUpgrade(){
+        ambariManager.getClusters().get(0).registerNewVersion("HDP","2.3","3.0-3020","redhat6","http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos6/2.x/BUILDS/2.3.3.0-3020","http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.20/repos/centos6");
+        ambariManager.getClusters().get(0).submitInstallPackageRequest("HDP", "2.3", "3.0-3020");
         ambariManager.getClusters().get(0).submitRollingUpgrade();
     }
 }
+

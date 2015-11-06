@@ -12,6 +12,7 @@ import com.hwx.ambariapilib.json.service.ServiceRequestJson;
 import com.hwx.ambariapilib.json.stack.StackUpgradeCheckDetailJson;
 import com.hwx.ambariapilib.json.stack.StackUpgradeCheckJson;
 import com.hwx.ambariapilib.json.stack.StackVersionListJson;
+import com.hwx.ambariapilib.json.upgrade.UpgradeRequestJson;
 import com.hwx.ambariapilib.json.view.ViewsListJson;
 import com.hwx.ambariapilib.service.Service;
 import com.hwx.ambariapilib.view.View;
@@ -20,6 +21,8 @@ import com.hwx.clientlib.http.HTTPMethods;
 import com.hwx.clientlib.http.HTTPRequest;
 import com.hwx.clientlib.http.HTTPResponse;
 import com.hwx.utils.FileUtils;
+import com.hwx.utils.WaitUtil;
+import com.hwx.utils.validation.ValidationUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -148,21 +151,20 @@ public class Cluster extends AmbariItems {
         map.put("{BUILDNUMBER}",buildNumber);
         map.put("{OPERATINGSYSTEM}",operatingSystem);
         map.put("{HDPBASEURL}",hdpBaseUrl);
-        map.put("{HDPUTILBASEURL}",hdpUtilsBaseUrl);
+        map.put("{HDPUTILBASEURL}", hdpUtilsBaseUrl);
 
 
         String body = FileUtils.getJsonAsString("UpgradeVersion.json",map);
-        //ToDo Change the stack version to be a parameter
         HTTPRequest req = new HTTPRequest(HTTPMethods.POST, "/stacks/HDP/versions/2.3/repository_versions/");
         req.setBody(new HTTPBody(body));
         HTTPResponse resp = rc.sendHTTPRequest(req);
 
-        if(resp.getStatusCode() != 201){
-            System.out.println(resp.getBody().getBodyText());
+        if(ValidationUtils.validateResponseCode(resp, 201))
+            return true;
+        else{
+            logger.logError(resp.getBody().getBodyText());
             return false;
         }
-        else
-            return true;
     }
 
     //Get the stack versions inside cluster
@@ -182,8 +184,8 @@ public class Cluster extends AmbariItems {
     }
 
 
-    //Submit the install
-    public void submitInstallPackageRequest(String stackName, String stackVersion, String buildNumber){
+    //Submit the install package request
+    public boolean submitInstallPackageRequest(String stackName, String stackVersion, String buildNumber){
         Map<String,String> map = new HashMap<String,String>();
         map.put("{STACKNAME}",stackName);
         map.put("{STACKVERSION}",stackVersion);
@@ -194,33 +196,27 @@ public class Cluster extends AmbariItems {
         req.setBody(new HTTPBody(body));
         HTTPResponse resp = rc.sendHTTPRequest(req);
 
-        if(resp.getStatusCode() != 202){
-            //Throw Exception
+        //Response code must be 202 with request id to track the progress.
+        if(ValidationUtils.validateResponseCode(resp,202)){
+            //Get the request id
+            UpgradeRequestJson upgradeRequestJson = gson.fromJson(resp.getBody().getBodyText(), UpgradeRequestJson.class);
+            int requestId = upgradeRequestJson.getRequests().getId();
+
+            //Monitor the request status and wait till status is completed
+            //ToDo Hack for clustername passing
+            WaitUtil.waitForRequestToBeCompleted(clusterJson.getHref(),requestId);
+            return true;
         }
         else{
-            //Parse the json
-            //Get the request status
-
+            logger.logError(resp.getBody().getBodyText());
+            return false;
         }
 
-
-        System.out.println(resp.getBody());
     }
 
     //Monitor the install package request
     public void monitorInstallPackageRequest(int requestId){
-        Request req = new Request(clusterJson.getHref()+"/requests/"+requestId);;
-
-
-
-        while(req.getRequestDetailJson().getRequests().getRequest_status()!="COMPLETED"){
-            try {
-                Thread.sleep(1 * 60 * 1000);
-            }catch(Exception e){}
-            req = new Request(clusterJson.getHref()+"/requests/"+requestId);
-        }
-        //ToDo Read request Response??
-//        System.out.println(req.getRequestDetailJson().getRequests().getCompleted_task_count());
+       WaitUtil.waitForRequestToBeCompleted(clusterJson.getHref(),requestId);
     }
 
    //Check the pre-requisite for upgrade
