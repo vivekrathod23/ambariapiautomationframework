@@ -12,7 +12,7 @@
         {
           "Repositories":{
             "repo_id":"HDP-{STACKVERSION}",
-            "repo_name":"HDP",
+            "repo_name":"HDP-{STACKVERSION}.{BUILDNUMBER}",
             "base_url":"{HDPBASEURL}"
           }
         },
