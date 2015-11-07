@@ -1,14 +1,18 @@
 package com.hwx;
 
-import com.hwx.ambariapilib.AmbariManager;
-import com.hwx.ambariapilib.host.Host;
-import com.hwx.utils.logging.LogManager;
+import java.util.ArrayList;
+import java.util.Date;
+
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.Date;
+import com.hwx.ambariapilib.AmbariManager;
+import com.hwx.ambariapilib.host.Host;
+import com.hwx.utils.LinuxCommandExecutor;
+import com.hwx.utils.LinuxCommandExecutor.IGNORE_ERRORS;
+import com.hwx.utils.ProcessData.Types_Of_Data;
+import com.hwx.utils.logging.LogManager;
 
 /**
  * Created by ajain on 9/11/15.
@@ -170,6 +174,24 @@ public class DemoTest {
         ambariManager.getClusters().get(0).registerNewVersion("HDP","2.3","3.0-3020","redhat6","http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos6/2.x/BUILDS/2.3.3.0-3020","http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.20/repos/centos6");
         ambariManager.getClusters().get(0).submitInstallPackageRequest("HDP", "2.3", "3.0-3020");
         ambariManager.getClusters().get(0).submitRollingUpgrade();
+    }
+    
+    @Test
+    public void testCommandLocalHost(){
+    	LinuxCommandExecutor lex = new LinuxCommandExecutor("", "","" ,new String[] {"ls -l ~/Documents/ | grep ambari; cd ~/Downloads ;pwd; ls"});
+    	String value = lex.executeCommandLocalHost(Types_Of_Data.OUTPUT, IGNORE_ERRORS.FALSE);
+    	int exitCode = lex.getExitCode();
+    	logger.logInfo(value);
+    	logger.logInfo("Exit code: " +exitCode);
+    }
+
+    @Test
+    public void testCommandRemotely(){
+    LinuxCommandExecutor lex = new LinuxCommandExecutor("172.22.91.194", "root",new String[] {"ls -l | grep ambari"});
+    String value = lex.executeCommandSequenceRemotely(Types_Of_Data.OUTPUT, IGNORE_ERRORS.FALSE);
+    int exitCode = lex.getExitCode();
+    logger.logInfo(value);
+    logger.logInfo("Exit code: " +exitCode);
     }
 }
 
