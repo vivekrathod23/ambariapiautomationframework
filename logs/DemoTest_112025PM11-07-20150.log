@@ -1,0 +1,86 @@
+11:20:25 PM 11-07-2015 DemoTest INFO - Sending command "bash -c ls -l ~/Documents/ | grep ambari; cd ~/Downloads ;pwd; ls" to localhost
+11:20:25 PM 11-07-2015 DemoTest INFO - Started retrieving data from streams of attached process: java.lang.UNIXProcess@6ebc05a6
+11:20:26 PM 11-07-2015 DemoTest INFO - -rw-r-----@  1 nkashyap  staff     66928 Sep 22 15:03 ambari_api_hld.pdf
+-rw-r--r--@  1 nkashyap  staff     40408 Sep 22 16:08 ambari_api_lld.pdf
+drwxr-xr-x   3 nkashyap  staff       102 Sep 30 15:04 ambariapiframework
+drwxr-xr-x   2 nkashyap  staff        68 Nov  5 11:40 api_automation_ambari
+drwxr-xr-x   3 nkashyap  staff       102 Oct 20 11:57 latest_ambari_automation
+/Users/nkashyap/Downloads
+About Downloads.lpdf
+Bidhan_resume.pdf
+Building Web Apps with Ember.js.pdf
+Cisco_WebEx_Add-On.dmg
+Firefox 25.0(1).dmg
+Firefox 25.0.dmg
+Firefox 30.0.dmg
+GitHub Desktop 211.zip
+HWX_VPN_Profile.mobileconfig
+HipChat.zip
+Hortonworks_offer_Nishant_Kashyap (1).pdf
+Hortonworks_offer_Nishant_Kashyap.pdf
+JavaTTTFall2014.mp4
+Karumanchi-made easy
+Karumanchi-made easy Algo book .rar
+LoggingExample.zip
+MacOutlook.pkg
+Nishantkashyap-TestDeveloper_8+years_resume.docx
+Nishantkashyap-TestDeveloper_8+years_resume.pdf
+Ravi Saurabh - Onsite Interview - 4.pdf
+Sunil_reddy (1).docx
+Sunil_reddy.docx
+Untitled Diagram.html
+VirtualBox-5.0.4-102546-OSX.dmg
+ambari (1).repo
+ambari (2).repo
+ambari-se-views-rhe6-2613-split1-5.novalocal
+ambari-se-views-rhe6-2613-split1-5.novalocal.tar.gz
+ambari.properties
+ambari.repo
+download
+eclipse-jee-mars-R-macosx-cocoa-x86_64.tar.gz
+fwdcompanycarprogram
+fwdcompanycarprogram.zip
+hdp.repo
+ideaIC-14.1.4.dmg
+javaforosx.dmg
+jdk-8u60-macosx-x64.dmg
+jenkins-build-params.properties
+jenkins-params (1).properties
+jenkins-params.properties
+jobviewer.jar
+mysql-community-release-sles11-7.noarch.rpm
+root@172.22.91.194
+shopcart.docx
+test_video_part0 (1).flv
+test_video_part0 (10).flv
+test_video_part0 (11).flv
+test_video_part0 (12).flv
+test_video_part0 (13).flv
+test_video_part0 (14).flv
+test_video_part0 (15).flv
+test_video_part0 (16).flv
+test_video_part0 (17).flv
+test_video_part0 (18).flv
+test_video_part0 (19).flv
+test_video_part0 (2).flv
+test_video_part0 (20).flv
+test_video_part0 (21).flv
+test_video_part0 (22).flv
+test_video_part0 (23).flv
+test_video_part0 (3).flv
+test_video_part0 (4).flv
+test_video_part0 (5).flv
+test_video_part0 (6).flv
+test_video_part0 (7).flv
+test_video_part0 (8).flv
+test_video_part0 (9).flv
+test_video_part0.flv
+test_video_part15.flv
+test_video_part2 (1).flv
+test_video_part2 (2).flv
+test_video_part2 (3).flv
+test_video_part2.flv
+test_video_part3.flv
+vagrant_1.7.3.dmg
+
+11:20:26 PM 11-07-2015 DemoTest INFO - Exit code: 0

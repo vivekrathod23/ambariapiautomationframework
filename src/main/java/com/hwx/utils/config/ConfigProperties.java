@@ -18,7 +18,8 @@ public enum ConfigProperties {
 	AMBARI_ADMIN_USER("ambari.admin.user"),
 	AMBARI_ADMIN_PASSWORD("ambari.admin.password"),
 	POLLING_COUNTER("polling.counter"),
-	TIMEOUT("time.timeout");
+	TIMEOUT("time.timeout"),
+	OPENSTACK_KEY_PATH("openStack.keypair.path");
 	
 	private final String key;
 
