@@ -7,16 +7,6 @@ import com.hwx.clientlib.http.HTTPResponse;
  */
 public class ValidationUtils {
 
-<<<<<<< HEAD
-    public static boolean validateResponseCode(HTTPResponse response, int... responseCodeList){
-        for(int responseCode : responseCodeList)
-            if(response.getStatusCode() == responseCode)
-                return true;
-
-        return false;
-    }
-}
-=======
   public static boolean validateResponseCode(HTTPResponse response, int... responseCodeList){
     for(int responseCode : responseCodeList)
       if(response.getStatusCode() == responseCode)
@@ -25,4 +15,3 @@ public class ValidationUtils {
     return false;
   }
 }
->>>>>>> e0de1b3248d1d6331373dad7a15a5289a544881a
