@@ -1,5 +1,5 @@
 package com.hwx.ambariapilib.cluster;
-
+// This class contains code for Cluster functionality
 
 import com.google.gson.Gson;
 import com.hwx.ambariapilib.AmbariItems;
@@ -15,6 +15,9 @@ import com.hwx.ambariapilib.json.stack.StackVersionListJson;
 import com.hwx.ambariapilib.json.upgrade.UpgradeRequestJson;
 import com.hwx.ambariapilib.json.view.ViewsListJson;
 import com.hwx.ambariapilib.service.Service;
+import com.hwx.ambariapilib.upgrade.ExpressUpgrade;
+import com.hwx.ambariapilib.upgrade.RollingUpgrade;
+import com.hwx.ambariapilib.upgrade.StackUpgrade;
 import com.hwx.ambariapilib.view.View;
 import com.hwx.clientlib.http.HTTPBody;
 import com.hwx.clientlib.http.HTTPMethods;
@@ -44,6 +47,16 @@ public class Cluster extends AmbariItems {
         HTTPResponse resp = rc.sendHTTPRequest(req);
 
         clusterJson = gson.fromJson(resp.getBody().getBodyText(), ClusterJson.class);
+    }
+
+    public StackUpgrade initializeStackUpgrade(String upgradeType) throws Exception {
+        if(upgradeType.equalsIgnoreCase("express"))
+            return new ExpressUpgrade(clusterJson);
+        else if(upgradeType.equalsIgnoreCase("rolling"))
+            return new RollingUpgrade(clusterJson);
+        else
+            throw new Exception("Invalid upgrade type parameter " + upgradeType + " passed. Valid values are express/rolling");
+
     }
 
 

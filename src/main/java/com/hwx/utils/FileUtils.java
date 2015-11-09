@@ -15,7 +15,7 @@ public class FileUtils {
 	
 	static String fileSeparator = System.getProperty("file.separator");
 
-	static String baseFilePath = System.getProperty("user.dir") + fileSeparator + "resources" + fileSeparator;
+	static String baseFilePath = System.getProperty("user.dir") + fileSeparator + "src" + fileSeparator + "resources" + fileSeparator;
 
 	
 

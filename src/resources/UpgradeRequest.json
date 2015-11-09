@@ -1,11 +1,12 @@
 {
   "Upgrade":{
-    "repository_version":"2.3.3.0-3020",
+    "upgrade_type":"NON_ROLLING",
+    "repository_version":"2.3.2.0-2950",
     "direction":"upgrade",
     "skip_service_check_failures":"true",
     "skip_failures":"true",
     "skip_prerequisite_checks":"true",
     "fail_on_check_warnings":"false",
-    "type":"NON_ROLLING"
+    "skip_manual_verification":"true"
   }
 }
