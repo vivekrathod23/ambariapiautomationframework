@@ -1,9 +1,8 @@
+
 package com.hwx.ambariapilib.upgrade;
 
-import com.google.gson.Gson;
 import com.hwx.ambariapilib.AmbariItems;
 import com.hwx.ambariapilib.json.cluster.ClusterJson;
-import com.hwx.ambariapilib.json.service.ServiceJson;
 import com.hwx.ambariapilib.json.upgrade.*;
 import com.hwx.clientlib.http.HTTPBody;
 import com.hwx.clientlib.http.HTTPMethods;
@@ -13,7 +12,9 @@ import com.hwx.utils.FileUtils;
 import com.hwx.utils.WaitUtil;
 import com.hwx.utils.validation.ValidationUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,7 +32,8 @@ public class StackUpgrade extends AmbariItems {
         HOLDING_FAILED,
         HOLDING_TIMEDOUT,
         SKIPPED_FAILED,
-        FAILED
+        FAILED,
+        IN_PROGRESS
     }
 
     public int getLastUpgradeRequestID() throws Exception {
@@ -55,7 +57,7 @@ public class StackUpgrade extends AmbariItems {
 
 
         String body = FileUtils.getJsonAsString("UpgradeVersion.json",map);
-        HTTPRequest req = new HTTPRequest(HTTPMethods.POST, "/stacks/HDP/versions/2.3/repository_versions/");
+        HTTPRequest req = new HTTPRequest(HTTPMethods.POST, "/stacks/HDP/versions/2.2/repository_versions/");
         req.setBody(new HTTPBody(body));
         HTTPResponse resp = rc.sendHTTPRequest(req);
 
@@ -69,7 +71,8 @@ public class StackUpgrade extends AmbariItems {
 
 
     //Submit the install package request
-    public boolean submitInstallPackageRequest(String stackName, String stackVersion, String buildNumber){
+    public boolean submitInstallPackageRequest(String stackName, String stackVersion, String buildNumber) throws Exception {
+        // TODO - Run "yum clean all" or OS specific equivalent on all hosts
         Map<String,String> map = new HashMap<String,String>();
         map.put("{STACKNAME}",stackName);
         map.put("{STACKVERSION}",stackVersion);
@@ -99,18 +102,89 @@ public class StackUpgrade extends AmbariItems {
     }
 
     //Submit rolling upgrade
-    public void submitRollingUpgrade(){
+    public void submitUpgrade(){
         Map<String,String> map = new HashMap<String,String>();
         String body = FileUtils.getJsonAsString("UpgradeRequest.json",map);
         HTTPRequest req = new HTTPRequest(HTTPMethods.POST, clusterJson.getHref()+"/upgrades");
         req.setBody(new HTTPBody(body));
         HTTPResponse resp = rc.sendHTTPRequest(req);
+        logger.logInfo(resp.getBody().getBodyText());
+    }
+
+    //Submit rolling upgrade
+    public void submitDowngrade() throws Exception {
+        //abortCurrentUpgrade();
+        Map<String,String> map = new HashMap<String,String>();
+        String body = FileUtils.getJsonAsString("DowngradeRequest.json",map);
+        HTTPRequest req = new HTTPRequest(HTTPMethods.POST, clusterJson.getHref()+"/upgrades");
+        req.setBody(new HTTPBody(body));
+        HTTPResponse resp = rc.sendHTTPRequest(req);
+        logger.logInfo(resp.getBody().getBodyText());
+    }
+
+    private void abortCurrentUpgrade() throws Exception {
+        Map<String,String> map = new HashMap<String,String>();
+        String body = FileUtils.getJsonAsString("AbortUpgradeRequest.json",map);
+        HTTPRequest req = new HTTPRequest(HTTPMethods.PUT, clusterJson.getHref()+"/upgrades/" + getLastUpgradeRequestID());
+        req.setBody(new HTTPBody(body));
+        HTTPResponse resp = rc.sendHTTPRequest(req);
+        logger.logInfo(resp.getBody().getBodyText());
+    }
+
+
+    public boolean isUpgradeComplete() throws Exception {
+        String status = getLastUpgradeStatus().getUpgrade().getRequest_status();
+        String message = "";
+        if(status.contains(UPGRADESTATUS.COMPLETED.toString()))
+            return true;
+        else if(status.equals(UPGRADESTATUS.HOLDING.toString())) {
+            message = String.format("Upgrade requires manual intervention. Current upgrade status: %s", status);
+            logger.logInfo(message);
+            //getLastPendingUpgradeItem();
+            logger.logInfo("Handling manual intervention step...");
+            proceedUpgradeAfterManualVerification();
+            logger.logInfo("Handling manual intervention step - DONE");
+        }
+        else if(status.contains(UPGRADESTATUS.PENDING.toString())) {
+            message = String.format("Upgrade is queued. Current upgrade status: %s", status);
+            logger.logInfo(message);
+        }
+        else if(status.contains(UPGRADESTATUS.IN_PROGRESS.toString())) {
+            message = String.format("Upgrade is in progress. Current upgrade status: %s", status);
+            logger.logInfo(message);
+        }
+        else if(status.contains(UPGRADESTATUS.FAILED.toString()) || status.contains(UPGRADESTATUS.HOLDING_TIMEDOUT.toString())) {
+            message = String.format("Error during Upgrade Operation. Upgrade failed with status: %s", status);
+            logger.logError(message);
+            getLastFailedUpgradeItem();
+            throw new Exception(message);
+        }
+
+        return false;
+    }
+
+    public boolean isManualInterventionRequiredDuringUpgrade() throws Exception {
+        String status = getLastUpgradeStatus().getUpgrade().getRequest_status();
+        String message = "";
+        if(status.equals(UPGRADESTATUS.HOLDING.toString())) {
+            message = String.format("Upgrade requires manual intervention. Current upgrade status: %s", status);
+            logger.logInfo(message);
+            return true;
+        }
+        else if(status.contains(UPGRADESTATUS.FAILED.toString()) || status.contains(UPGRADESTATUS.HOLDING_TIMEDOUT.toString())) {
+            message = String.format("Error during Upgrade Operation. Upgrade failed with status: %s", status);
+            logger.logError(message);
+            getLastFailedUpgradeItem();
+            throw new Exception(message);
+        }
+
+        return false;
     }
 
 
     //Monitor the install package request
     public void monitorInstallPackageRequest(int requestId){
-        WaitUtil.waitForRequestToBeCompleted(clusterJson.getHref(),requestId);
+        //WaitUtil.waitForRequestToBeCompleted(clusterJson.getHref(), requestId);
     }
 
 
@@ -150,20 +224,112 @@ public class StackUpgrade extends AmbariItems {
 
     public UpgradeStatusJson getLastUpgradeStatus() throws Exception {
         //HTTPRequest req = new HTTPRequest(HTTPMethods.GET, clusterJson.getHref()+"/upgrades/"+getLastUpgradeRequestID());
-        HTTPResponse resp = getAPIResponse(HTTPMethods.GET, clusterJson.getHref()+"/upgrades/"+getLastUpgradeRequestID());
+        HTTPResponse resp = getAPIResponse(HTTPMethods.GET, clusterJson.getHref() + "/upgrades/" + getLastUpgradeRequestID());
 
         return gson.fromJson(resp.getBody().getBodyText(), UpgradeStatusJson.class);
     }
 
     public void getLastFailedUpgradeItem() throws Exception {
         UpgradeItemsJson upgradeItemsJson = getUpgradeItem(UPGRADESTATUS.FAILED);
-        logger.logInfo(upgradeItemsJson.getTasks()[0].getTask().getStatus());
+
+        logger.logInfo(upgradeItemsJson.getUpgradeItem().getStatus());
+        logger.logInfo(upgradeItemsJson.getHref());
+        logger.logInfo(upgradeItemsJson.getUpgradeItem().getText());
+        getFailedUpgradeTasks(upgradeItemsJson.getTasks());
+
     }
 
-    public void getCompletedUpgradeItem() throws Exception {
-        UpgradeItemsJson upgradeItemsJson = getUpgradeItem(UPGRADESTATUS.COMPLETED);
-        logger.logInfo(upgradeItemsJson.getTasks()[0].getTask().getStatus());
+    public void getFailedUpgradeTasks(TasksJson[] tasksJson) throws Exception {
+
+        for(int i=0 ; i < tasksJson.length ; i++) {
+            HTTPResponse resp = getAPIResponse(HTTPMethods.GET, tasksJson[i].getHref());
+            logger.logInfo("===========Upgrade Tasks Info==========================");
+            logger.logInfo(resp.getBody().getBodyText());
+            logger.logInfo("=====================================");
+        }
+
     }
+
+
+
+    public void getCompleteUpgradeAPIOutput() throws Exception {
+        HTTPResponse resp = getAPIResponse(HTTPMethods.GET, clusterJson.getHref() + "/upgrades/" + getLastUpgradeRequestID());
+        logger.logInfo(resp.getBody().getBodyText());
+
+        UpgradeStatusJson upgradeStatusJson = gson.fromJson(resp.getBody().getBodyText(), UpgradeStatusJson.class);
+
+        UpgradeGroupsJson[] upgradeGroupsJson = upgradeStatusJson.getUpgrade_groups();
+
+        for (int i = 0; i < upgradeGroupsJson.length; i++) {
+            resp = getAPIResponse(HTTPMethods.GET,upgradeGroupsJson[i].getHref());
+            logger.logInfo("===========Upgrade Groups Info==========================");
+            logger.logInfo(resp.getBody().getBodyText());
+
+            resp = getAPIResponse(HTTPMethods.GET,upgradeGroupsJson[i].getHref());
+
+            UpgradeGroupsJson upgradeGroupJson = gson.fromJson(resp.getBody().getBodyText(), UpgradeGroupsJson.class);
+
+            UpgradeItemsJson[] upgradeItemsJson = upgradeGroupJson.getUpgrade_items();
+            for (int j = 0; j < upgradeItemsJson.length; j++) {
+                resp = getAPIResponse(HTTPMethods.GET,upgradeItemsJson[j].getHref());
+                logger.logInfo("===========Upgrade Items Info==========================");
+                logger.logInfo(resp.getBody().getBodyText());
+                logger.logInfo("=====================================");
+                UpgradeItemsJson upgradeItemJson = gson.fromJson(resp.getBody().getBodyText(), UpgradeItemsJson.class);
+
+
+                for (int k=0;k < upgradeItemJson.getTasks().length ; k++) {
+                    resp = getAPIResponse(HTTPMethods.GET, upgradeItemJson.getTasks()[k].getHref());
+                    logger.logInfo("===========Upgrade Tasks Info==========================");
+                    logger.logInfo(resp.getBody().getBodyText());
+                    logger.logInfo("=====================================");
+
+                }
+
+            }
+
+            logger.logInfo("=====================================");
+        }
+
+    }
+
+    public List<UpgradeItemsJson> getCompletedUpgradeItem() throws Exception {
+        // UpgradeItemsJson upgradeItemsJson = getUpgradeItem(UPGRADESTATUS.COMPLETED);
+        //logger.logInfo(upgradeItemsJson.getUpgradeItem().getStatus());
+
+        UpgradeStatusJson upgradeStatusJson = getLastUpgradeStatus();
+        UpgradeGroupsJson[] upgradeGroupsJson = upgradeStatusJson.getUpgrade_groups();
+        List<UpgradeItemsJson> upgradeItemsList = new ArrayList<UpgradeItemsJson>();
+
+        if(upgradeGroupsJson.length > 0) {
+            for (int i=0; i< upgradeGroupsJson.length ; i++) {
+
+                HTTPResponse resp = getAPIResponse(HTTPMethods.GET,upgradeGroupsJson[i].getHref());
+                UpgradeGroupsJson upgradeGroupJson = gson.fromJson(resp.getBody().getBodyText(), UpgradeGroupsJson.class);
+
+                if(upgradeGroupJson.getUpgradeGroup().getStatus().contains(UPGRADESTATUS.COMPLETED.toString())) {
+                    UpgradeItemsJson[] upgradeItemsJson = upgradeGroupJson.getUpgrade_items();
+
+                    for (int j=0; j< upgradeItemsJson.length ; j++) {
+                        resp = getAPIResponse(HTTPMethods.GET, upgradeItemsJson[j].getHref());
+                        UpgradeItemsJson upgradeItemJson = gson.fromJson(resp.getBody().getBodyText(), UpgradeItemsJson.class);
+
+                        if(upgradeItemJson.getUpgradeItem().getStatus().contains(UPGRADESTATUS.COMPLETED.toString())) {
+                            upgradeItemsList.add(upgradeItemJson);
+                        }
+
+                    }
+
+                }
+            }
+
+        }
+        return upgradeItemsList;
+
+    }
+
+
+
 
     private UpgradeItemsJson getUpgradeItem(UPGRADESTATUS type) throws Exception {
         UpgradeStatusJson upgradeStatusJson = getLastUpgradeStatus();
@@ -175,7 +341,7 @@ public class StackUpgrade extends AmbariItems {
                 HTTPResponse resp = getAPIResponse(HTTPMethods.GET,upgradeGroupsJson[i].getHref());
                 UpgradeGroupsJson upgradeGroupJson = gson.fromJson(resp.getBody().getBodyText(), UpgradeGroupsJson.class);
 
-                if(upgradeGroupJson.getUpgradeGroup().getStatus().equalsIgnoreCase(UPGRADESTATUS.HOLDING.toString())) {
+                if(upgradeGroupJson.getUpgradeGroup().getStatus().contains(type.toString())) {
                     logger.logInfo("Status " + upgradeGroupJson.getUpgradeGroup().getStatus());
                     logger.logInfo("For Upgrade group " + upgradeGroupsJson[i].getHref());
 
@@ -186,13 +352,8 @@ public class StackUpgrade extends AmbariItems {
                         resp = getAPIResponse(HTTPMethods.GET, upgradeItemsJson[j].getHref());
                         UpgradeItemsJson upgradeItemJson = gson.fromJson(resp.getBody().getBodyText(), UpgradeItemsJson.class);
 
-                        if(upgradeItemJson.getUpgradeItem().getStatus().equalsIgnoreCase(type.toString())) {
-                            return upgradeItemsJson[j];
-                            //lastPendingUpgradeItem = upgradeItemsJson[j].getHref();
-                            //logger.logInfo("HOLDING endpoint " + lastPendingUpgradeItem);
-//                            logger.logInfo("Status " + upgradeItemJson.getUpgradeItem().getStatus());
-//                            logger.logInfo("Context & Text " + upgradeItemJson.getUpgradeItem().getContext() + " " + upgradeItemJson.getUpgradeItem().getText());
-//                            logger.logInfo("Task ref " + upgradeItemJson.getTasks()[0].getHref());
+                        if(upgradeItemJson.getUpgradeItem().getStatus().contains(type.toString())) {
+                            return upgradeItemJson;
                         }
 
                     }
@@ -203,6 +364,8 @@ public class StackUpgrade extends AmbariItems {
         }
         return null;
     }
+
+
 
     public String getLastPendingUpgradeItem() throws Exception {
 
@@ -231,6 +394,8 @@ public class StackUpgrade extends AmbariItems {
                         if(upgradeItemJson.getUpgradeItem().getStatus().equalsIgnoreCase(UPGRADESTATUS.HOLDING.toString())) {
                             lastPendingUpgradeItem = upgradeItemsJson[j].getHref();
                             logger.logInfo("HOLDING endpoint " + lastPendingUpgradeItem);
+                            logger.logInfo("HOLDING endpoint " + upgradeItemJson.getHref());
+                            logger.logInfo("HOLDING endpoint " + upgradeItemJson.getUpgradeItem().getText());
 //                            logger.logInfo("Status " + upgradeItemJson.getUpgradeItem().getStatus());
 //                            logger.logInfo("Context & Text " + upgradeItemJson.getUpgradeItem().getContext() + " " + upgradeItemJson.getUpgradeItem().getText());
 //                            logger.logInfo("Task ref " + upgradeItemJson.getTasks()[0].getHref());
@@ -275,3 +440,5 @@ public class StackUpgrade extends AmbariItems {
 
 
 }
+
+

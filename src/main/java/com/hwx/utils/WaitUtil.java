@@ -12,31 +12,36 @@ public class WaitUtil {
   public static final int timeOutInSec = 20000; //Integer.parseInt(ConfigProperties.TIMEOUT.getKey());
 
 
+
+
   //Wait for request to be completed
-  public static void waitForRequestToBeCompleted(String clusterAPIUrl, int requestId){
+  public static void waitForRequestToBeCompleted(String clusterAPIUrl, int requestId) throws Exception {
     Request req = new Request(clusterAPIUrl+"/requests/"+requestId);
 
     int iteration = 1;
     int waitTime = 0;
+    String requestStatus = req.getRequestDetailJson().getRequests().getRequest_status();
 
-    while((waitTime < timeOutInSec) && (! req.getRequestDetailJson().getRequests().getRequest_status().equals("COMPLETED"))){
-      //Increase wait time linearly
-      waitForIncreasingInterval(WaitTime.LONGWAIT,iteration);
-      waitTime += WaitTime.LONGWAIT.getTime() * iteration;
+    while((waitTime < timeOutInSec) && (!requestStatus.equals("COMPLETED"))){
+     //Increase wait time linearly
+     waitForIncreasingInterval(WaitTime.LONGWAIT,iteration);
+     waitTime += WaitTime.LONGWAIT.getTime() * iteration;
 
+     System.out.println("Wait for "+(WaitTime.LONGWAIT.getTime() * iteration)+"   Total Wait Time : "+waitTime);
 
-      System.out.println("Wait for "+(WaitTime.LONGWAIT.getTime() * iteration)+"   Total Wait Time : "+waitTime);
-
-      //Send the request again
-      req = new Request(clusterAPIUrl+"/requests/"+requestId);
-//            iteration *= 2;
-    }
+     //Send the request again
+     req = new Request(clusterAPIUrl+"/requests/"+requestId);
+     requestStatus = req.getRequestDetailJson().getRequests().getRequest_status();
+     if(requestStatus.equalsIgnoreCase("FAILED"))
+     throw new Exception("Error during package install operation on one or more nodes");
+//            iteration *= 2;
+     }
 
     if(waitTime >= timeOutInSec ){
       //Throw Timeout Exception
       //ToDo Define timeout exception
-    }
-  }
+      }
+   }
 
   //Wait for defined period
   public static void waitForFixedInterval(WaitTime waitTime){

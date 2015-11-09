@@ -1,8 +1,10 @@
 package common;
 
 import com.hwx.ambariapilib.AmbariManager;
+import com.hwx.utils.config.ConfigManager;
 import com.hwx.utils.logging.LogManager;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 
 /**
  * Created by vsharma on 11/8/15.

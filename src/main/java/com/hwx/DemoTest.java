@@ -3,22 +3,17 @@ package com.hwx;
 import com.hwx.ambariapilib.AmbariManager;
 import com.hwx.ambariapilib.host.Host;
 import com.hwx.ambariapilib.json.upgrade.UpgradeStatusJson;
-import com.hwx.ambariapilib.upgrade.ExpressUpgrade;
 import com.hwx.ambariapilib.upgrade.StackUpgrade;
-import com.hwx.utils.logging.LogManager;
-import java.util.ArrayList;
-import java.util.Date;
-
-import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
-import com.hwx.ambariapilib.AmbariManager;
-import com.hwx.ambariapilib.host.Host;
 import com.hwx.utils.LinuxCommandExecutor;
 import com.hwx.utils.LinuxCommandExecutor.IGNORE_ERRORS;
 import com.hwx.utils.ProcessData.Types_Of_Data;
 import com.hwx.utils.logging.LogManager;
+import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by ajain on 9/11/15.
@@ -160,14 +155,10 @@ public class DemoTest {
     }
 
     @Test
-    public void testInstallPackageRequest(){
+    public void testInstallPackageRequest() throws Exception {
         ambariManager.getClusters().get(0).submitInstallPackageRequest("HDP", "2.3", "3.0-3020");
     }
 
-    @Test
-    public void testMonitorInstallPackage(){
-        ambariManager.getClusters().get(0).monitorInstallPackageRequest(143);
-    }
 
     @Test
     public void testSubmitExpressUpgrade()
@@ -176,7 +167,7 @@ public class DemoTest {
     }
 
     @Test
-    public void testUpgrade(){
+    public void testUpgrade() throws Exception {
         ambariManager.getClusters().get(0).registerNewVersion("HDP","2.3","3.0-3020","redhat6","http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos6/2.x/BUILDS/2.3.3.0-3020","http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.20/repos/centos6");
         ambariManager.getClusters().get(0).submitInstallPackageRequest("HDP", "2.3", "3.0-3020");
         ambariManager.getClusters().get(0).submitRollingUpgrade();
@@ -212,7 +203,7 @@ public class DemoTest {
 
         //stackUpgrade.registerNewVersion("HDP-2.3.2.0", "2.3", "2.0", "redhat6", "http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.3.2.0", "http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.20/repos/centos6");
         //stackUpgrade.submitInstallPackageRequest("HDP", "2.3", "2.0");
-        stackUpgrade.submitRollingUpgrade();
+        stackUpgrade.submitUpgrade();
 
         while(true) {
             String status = stackUpgrade.getLastUpgradeStatus().getUpgrade().getRequest_status();
@@ -242,7 +233,7 @@ public class DemoTest {
     	String value = lex.executeCommandLocalHost(Types_Of_Data.OUTPUT, IGNORE_ERRORS.FALSE);
     	int exitCode = lex.getExitCode();
     	logger.logInfo(value);
-    	logger.logInfo("Exit code: " +exitCode);
+    	logger.logInfo("Exit code: " + exitCode);
     }
 
     @Test

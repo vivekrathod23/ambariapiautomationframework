@@ -198,7 +198,7 @@ public class Cluster extends AmbariItems {
 
 
     //Submit the install package request
-    public boolean submitInstallPackageRequest(String stackName, String stackVersion, String buildNumber){
+    public boolean submitInstallPackageRequest(String stackName, String stackVersion, String buildNumber) throws Exception {
         Map<String,String> map = new HashMap<String,String>();
         map.put("{STACKNAME}",stackName);
         map.put("{STACKVERSION}",stackVersion);
@@ -227,10 +227,6 @@ public class Cluster extends AmbariItems {
 
     }
 
-    //Monitor the install package request
-    public void monitorInstallPackageRequest(int requestId){
-       WaitUtil.waitForRequestToBeCompleted(clusterJson.getHref(),requestId);
-    }
 
    //Check the pre-requisite for upgrade
     public  ArrayList<StackUpgradeCheckJson>  checkForPreRequisiteForUpgrade(int repoVersion, String upgradeType){
