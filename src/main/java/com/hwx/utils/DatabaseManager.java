@@ -1,61 +1,57 @@
 package com.hwx.utils;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
+import com.hwx.utils.config.ConfigManager;
 import com.hwx.utils.config.ConfigProperties;
+
+import java.sql.*;
 
 /**
  * Created by nkashyap on 25/09/15.
  */
 
 public class DatabaseManager {
-	
-	 Connection connection = null;
+	static Connection connection = null;
+	protected static ConfigManager conf = ConfigManager.getInstance();
 
-	    public DatabaseManager(String drivers) {
-	        if (drivers != null) System.setProperty(ConfigProperties.JDBC_DRIVERS.getKey(), drivers);
 
-	    }
+	public static boolean openConnection(String url, String username, String password) throws ClassNotFoundException, Exception {
 
-	    public boolean openConnection(String url, String username, String password) {
-	        try {
-	            connection = DriverManager.getConnection(url, username, password);
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        }
-			return connection != null;
-	    }
+		try {
 
-	    public void closeConnection() {
-	        if (connection != null) {
-	            try {
-	                connection.close();
-	            } catch (SQLException e) {
-	                e.printStackTrace();
-	            }
-	        }
-	    }
+			Class.forName(conf.getString(ConfigProperties.JDBC_DRIVERS.getKey()));
+			connection = DriverManager.getConnection(url, username, password);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return connection != null;
+	}
 
-	    /**
-	     * An instance of class that implements ResultSet must be closed.
-	     *
-	     */
-	    public ResultSet executeQuery(String query) {
-	        if (connection == null) return null;
-	        ResultSet result = null;
-	        Statement stat;
-	        try {
-	            stat = connection.createStatement();
-	            result = stat.executeQuery(query);
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        }
-	        return result;
-	    }
+	public void closeConnection() {
+		if (connection != null) {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * An instance of class that implements ResultSet must be closed.
+	 *
+	 */
+	public static ResultSet executeQuery(String query) {
+		if (connection == null) return null;
+		ResultSet result = null;
+		Statement stat;
+		try {
+			stat = connection.createStatement();
+			result = stat.executeQuery(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
 
 
 }

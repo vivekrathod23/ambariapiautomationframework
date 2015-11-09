@@ -31,4 +31,19 @@ public class HostComponent extends AmbariItems{
     public void setHostComponentDetailsJson(HostComponentDetailsJson hostComponentDetailsJson) {
         this.hostComponentDetailsJson = hostComponentDetailsJson;
     }
+
+    //Get the host state
+    public String getState(){
+        return hostComponentDetailsJson.getHostRoles().getState();
+    }
+
+    //Get the host state
+    public String getUpgradeState(){
+        return hostComponentDetailsJson.getHostRoles().getUpgrade_state();
+    }
+
+    //Get the host state
+    public String getName(){
+        return hostComponentDetailsJson.getHostRoles().getComponent_name();
+    }
 }

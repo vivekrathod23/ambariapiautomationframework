@@ -2,7 +2,9 @@ package com.hwx;
 
 import com.hwx.ambariapilib.AmbariManager;
 import com.hwx.ambariapilib.host.Host;
+import com.hwx.ambariapilib.host.HostComponent;
 import com.hwx.ambariapilib.json.upgrade.UpgradeStatusJson;
+import com.hwx.ambariapilib.service.Service;
 import com.hwx.ambariapilib.upgrade.StackUpgrade;
 import com.hwx.utils.LinuxCommandExecutor;
 import com.hwx.utils.LinuxCommandExecutor.IGNORE_ERRORS;
@@ -243,6 +245,32 @@ public class DemoTest {
     int exitCode = lex.getExitCode();
     logger.logInfo(value);
     logger.logInfo("Exit code: " +exitCode);
+    }
+
+    @Test
+    public void testServiceState(){
+        ArrayList<Service> serviceList = ambariManager.getClusters().get(0).getServices();
+
+        for(int i = 0;i<serviceList.size();i++){
+            System.out.println(serviceList.get(i).getName()+"\t"+serviceList.get(i).getState());
+        }
+
+
+    }
+
+    @Test
+    public void testHostComponentState(){
+        ArrayList<Host> hostList = ambariManager.getClusters().get(0).getHosts();
+
+        for(int i = 0;i<hostList.size();i++){
+            ArrayList<HostComponent> hostComponentsList = hostList.get(i).getHostComponents();
+
+            for(int j = 0;j<hostComponentsList.size();j++){
+                System.out.println(hostList.get(i).getName()+"\t"+hostComponentsList.get(j).getName()+"\t"+hostComponentsList.get(j).getState());
+            }
+        }
+
+
     }
 }
 
