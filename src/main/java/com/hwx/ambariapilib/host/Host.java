@@ -158,4 +158,8 @@ public class Host extends AmbariItems{
         return hostJson.getHosts().getHost_name();
         }
 
+    public String getHostIP(){
+        return hostJson.getHosts().getIp();
+    }
+
 }

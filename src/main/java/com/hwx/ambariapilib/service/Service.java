@@ -64,4 +64,9 @@ public class Service extends AmbariItems {
     public String getName(){
         return clusterServiceDetailsJson.getServiceInfo().getService_name();
     }
+
+    //Is Service started
+    public boolean isStarted(){
+        return getState().equals("STARTED");
+    }
 }

@@ -46,4 +46,12 @@ public class HostComponent extends AmbariItems{
     public String getName(){
         return hostComponentDetailsJson.getHostRoles().getComponent_name();
     }
+
+    public boolean isStarted(){
+        return getState().equals("STARTED");
+    }
+
+    public String toString(){
+        return getName();
+    }
 }

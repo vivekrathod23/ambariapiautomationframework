@@ -10,6 +10,7 @@ import com.hwx.utils.LinuxCommandExecutor;
 import com.hwx.utils.LinuxCommandExecutor.IGNORE_ERRORS;
 import com.hwx.utils.ProcessData.Types_Of_Data;
 import com.hwx.utils.logging.LogManager;
+import com.hwx.utils.validation.ValidationUtils;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -270,6 +271,25 @@ public class DemoTest {
             }
         }
 
+
+    }
+
+    @Test
+    public void testAllServicesStarted(){
+        if(ValidationUtils.isAllServiceStarted())
+            System.out.println("All Servcies Started Successfully");
+        else
+            System.out.println("NOT All Services Started");
+    }
+
+    @Test
+    public void testAllHostComponentsStarted(){
+        if(ValidationUtils.isAllHostComponentStarted())
+            System.out.println("All Host Components Started Successfully");
+        else{
+            System.out.println("NOT All Host Components Started");
+            System.out.println(ValidationUtils.getFailedComponents());
+        }
 
     }
 }
