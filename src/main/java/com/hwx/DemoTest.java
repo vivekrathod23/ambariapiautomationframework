@@ -5,6 +5,7 @@ import com.hwx.ambariapilib.host.Host;
 import com.hwx.ambariapilib.host.HostComponent;
 import com.hwx.ambariapilib.json.upgrade.UpgradeStatusJson;
 import com.hwx.ambariapilib.service.Service;
+import com.hwx.ambariapilib.service.ServiceAlerts;
 import com.hwx.ambariapilib.upgrade.StackUpgrade;
 import com.hwx.utils.LinuxCommandExecutor;
 import com.hwx.utils.LinuxCommandExecutor.IGNORE_ERRORS;
@@ -40,6 +41,20 @@ public class DemoTest {
             logger.logInfo("Host : "+hosts.get(i)+" State : "+hosts.get(i).getHealthState());
             Assert.assertEquals(hosts.get(i).getHealthState(), "HEALTHY");
         }
+    }
+
+    @Test
+    public void testAlerts(){
+        ServiceAlerts obj = new ServiceAlerts("http://172.22.107.44:8080/api/v1/clusters/cl1/services/HDFS");
+        System.out.println("COUNT OF OK ALERTS " + obj.getOkAlertsCount());
+        System.out.println("COUNT OF WARNINGS ALERTS " + obj.getWarningAlerts());
+        System.out.println("COUNT OF UNKNOWN ALERTS " + obj.getUnknownAlertsCount());
+        System.out.println("COUNT OF CRITICAL ALERTS " + obj.getCriticalAlertsCount());
+        System.out.println("CRITICAL ALERT HREF" + obj.getCriticalAlerts());
+        System.out.println("Array of OK ALERT HREF" + obj.getOkAlerts());
+        System.out.println("Array of CRITICAL ALERT HREF" + obj.getCriticalAlerts());
+        System.out.println("Array of UNKNOWN ALERT HREF" + obj.getUnknownAlerts());
+        System.out.println("Array of WARNINGS ALERT HREF" + obj.getWarningAlerts());
     }
 
     @Test
