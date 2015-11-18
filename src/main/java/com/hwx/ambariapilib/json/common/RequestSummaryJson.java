@@ -19,7 +19,7 @@ public class RequestSummaryJson {
     private String request_context;
     private String request_schedule;
     private String request_status;
-    private String[] resource_filters;
+    // private String[] resource_filters;
     private long start_time;
     private int task_count;
     private int timed_out_task_count;
@@ -143,14 +143,6 @@ public class RequestSummaryJson {
 
     public void setRequest_status(String request_status) {
         this.request_status = request_status;
-    }
-
-    public String[] getResource_filters() {
-        return resource_filters;
-    }
-
-    public void setResource_filters(String[] resource_filters) {
-        this.resource_filters = resource_filters;
     }
 
     public long getStart_time() {

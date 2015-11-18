@@ -1,12 +1,12 @@
 {
   "Upgrade":{
-    "upgrade_type":"NON_ROLLING",
-    "repository_version":"2.3.2.0-2950",
-    "direction":"upgrade",
-    "skip_service_check_failures":"true",
-    "skip_failures":"true",
-    "skip_prerequisite_checks":"true",
-    "fail_on_check_warnings":"false",
-    "skip_manual_verification":"true"
+    "upgrade_type":"{UPGRADE_TYPE}",
+    "repository_version":"{REPO_VERSION}",
+    "direction":"{DIRECTION}",
+    "skip_service_check_failures":"{SKIP_SERVICE_CHECK_FAILURE}",
+    "skip_failures":"{SKIP_SLAVE_FAILURE}",
+    "skip_prerequisite_checks":"{SKIP_PREREQUISITE_CHECKS}",
+    "fail_on_check_warnings":"{FAIL_ON_CHECK_WARNINGS}",
+    "skip_manual_verification":"{SKIP_MANUAL_VERIFICATION}"
   }
 }

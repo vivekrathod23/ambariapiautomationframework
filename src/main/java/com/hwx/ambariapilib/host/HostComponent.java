@@ -51,6 +51,10 @@ public class HostComponent extends AmbariItems{
         return getState().equals("STARTED");
     }
 
+    public boolean isInstalled(){
+        return getState().equals("INSTALLED");
+    }
+
     public String toString(){
         return getName();
     }

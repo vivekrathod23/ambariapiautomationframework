@@ -7,6 +7,7 @@ public class RepositoryVersionDetailJson {
     private int id;
     private String stack_name;
     private String stack_version;
+    private String repository_version;
 
     public int getId() {
         return id;
@@ -30,5 +31,9 @@ public class RepositoryVersionDetailJson {
 
     public void setStack_version(String stack_version) {
         this.stack_version = stack_version;
+    }
+
+    public String getRepository_version() {
+        return repository_version;
     }
 }

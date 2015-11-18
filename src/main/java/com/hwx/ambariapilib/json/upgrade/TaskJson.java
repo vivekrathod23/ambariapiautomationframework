@@ -22,7 +22,7 @@ public class TaskJson {
     private String status;
     private String stderr;
     private String stdout;
-    private String structured_out;
+    // private String structured_out;
 
     public int getAttempt_cnt() {
         return attempt_cnt;
@@ -96,7 +96,7 @@ public class TaskJson {
         return stdout;
     }
 
-    public String getStructured_out() {
-        return structured_out;
-    }
+    // public String getStructured_out() {
+       // return structured_out;
+    //}
 }

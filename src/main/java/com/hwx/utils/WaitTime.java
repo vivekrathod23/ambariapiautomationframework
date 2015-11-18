@@ -6,8 +6,8 @@ package com.hwx.utils;
 public enum WaitTime {
 
   SHORTWAIT(1),
-  MEDIUMWAIT(5),
-  LONGWAIT(10);
+  MEDIUMWAIT(10),
+  LONGWAIT(30);
 
   private final int waitTime;
 

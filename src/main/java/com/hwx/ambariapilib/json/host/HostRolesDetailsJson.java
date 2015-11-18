@@ -19,20 +19,23 @@ public class HostRolesDetailsJson {
     private String upgrade_state;
     private HostConfiguration actual_configs;
 
+    public String getUpgrade_state() {
+        return upgrade_state;
+    }
+
+    public void setUpgrade_state(String upgrade_state) {
+        this.upgrade_state = upgrade_state;
+    }
+
+    public String getComponent_name() {
+        return component_name;
+    }
     public String getCluster_name() {
         return cluster_name;
     }
 
     public void setCluster_name(String cluster_name) {
         this.cluster_name = cluster_name;
-    }
-
-    public String getComponent_name() {
-        return component_name;
-    }
-
-    public void setComponent_name(String component_name) {
-        this.component_name = component_name;
     }
 
     public String getDesired_admin_state() {
@@ -113,14 +116,6 @@ public class HostRolesDetailsJson {
 
     public void setState(String state) {
         this.state = state;
-    }
-
-    public String getUpgrade_state() {
-        return upgrade_state;
-    }
-
-    public void setUpgrade_state(String upgrade_state) {
-        this.upgrade_state = upgrade_state;
     }
 
     public HostConfiguration getActual_configs() {

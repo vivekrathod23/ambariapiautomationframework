@@ -5,7 +5,7 @@ package com.hwx.ambariapilib.json.service;
  */
 public class ServiceComponentJson {
     private String href;
-    private ServiceComponentItemJson[] getServiceComponents;
+    private ServiceComponentItemJson[] items;
 
     public String getHref() {
         return href;
@@ -16,10 +16,10 @@ public class ServiceComponentJson {
     }
 
     public ServiceComponentItemJson[] getGetServiceComponents() {
-        return getServiceComponents;
+        return items;
     }
 
     public void setGetServiceComponents(ServiceComponentItemJson[] getServiceComponents) {
-        this.getServiceComponents = getServiceComponents;
+        this.items = getServiceComponents;
     }
 }

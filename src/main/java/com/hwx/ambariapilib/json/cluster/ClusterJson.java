@@ -6,6 +6,7 @@ import com.hwx.ambariapilib.json.alert.AlertSummaryJson;
 import com.hwx.ambariapilib.json.common.ArtifactJson;
 import com.hwx.ambariapilib.json.common.Workflow;
 import com.hwx.ambariapilib.json.service.ServiceConfigVersion;
+import com.hwx.ambariapilib.service.Service;
 
 /**
  * Created by ajain on 9/30/15.
@@ -154,5 +155,15 @@ public class ClusterJson {
 
     public void setArtifacts(ArtifactJson[] artifacts) {
         this.artifacts = artifacts;
+    }
+
+    public Service getService(String serviceName) {
+        ClusterServiceListJson[] services = getServices();
+
+        for (int i=0 ; i < services.length ; i++) {
+            if (services[i].getServiceInfo().getService_name().equalsIgnoreCase(serviceName))
+                return new Service(services[i].getHref());
+        }
+        return null;
     }
 }

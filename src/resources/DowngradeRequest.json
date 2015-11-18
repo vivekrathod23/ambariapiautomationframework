@@ -1,0 +1,10 @@
+{
+  "RequestInfo":{
+    "downgrade": "true"
+  },
+  "Upgrade":{
+    "upgrade_type":"{UPGRADE_TYPE}",
+    "repository_version":"{REPO_VERSION}",
+    "from_version":"{FROM_VERSION}"
+  }
+}

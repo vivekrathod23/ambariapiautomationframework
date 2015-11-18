@@ -1,13 +1,19 @@
 package com.hwx.ambariapilib.service;
 
 import com.hwx.ambariapilib.AmbariItems;
+import com.hwx.ambariapilib.common.IDConstants;
 import com.hwx.ambariapilib.json.cluster.ClusterServiceDetailsJson;
 import com.hwx.ambariapilib.json.service.ServiceComponentJson;
 import com.hwx.clientlib.http.HTTPMethods;
 import com.hwx.clientlib.http.HTTPRequest;
 import com.hwx.clientlib.http.HTTPResponse;
+import com.hwx.utils.LinuxCommandExecutor;
+import com.hwx.utils.ProcessData;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by ajain on 10/5/15.
@@ -31,8 +37,8 @@ public class Service extends AmbariItems {
         this.clusterServiceDetailsJson = clusterServiceDetailsJson;
     }
 
-    public ArrayList<ServiceComponent> getServiceComponents(){
-        ArrayList<ServiceComponent> serviceComponents = new ArrayList<ServiceComponent>();
+    public List<ServiceComponent> getServiceComponents(){
+        List<ServiceComponent> serviceComponents = new ArrayList<ServiceComponent>();
 
         HTTPRequest req = new HTTPRequest(HTTPMethods.GET, clusterServiceDetailsJson.getHref()+"/components");
         HTTPResponse resp = rc.sendHTTPRequest(req);
@@ -69,4 +75,52 @@ public class Service extends AmbariItems {
     public boolean isStarted(){
         return getState().equals("STARTED");
     }
+
+    /**
+     * Returns list of all hosts where one or more components of the service are installed
+     * @return
+     */
+    public Set<String> getHosts() {
+        List<ServiceComponent> serviceComponents = getServiceComponents();
+        Set<String> hosts = new HashSet<String>();
+
+        for(ServiceComponent serviceComponent : serviceComponents) {
+            for(String host : serviceComponent.getHosts())
+                hosts.add(host);
+        }
+        return hosts;
+    }
+
+    public void injectServiceCheckFailure() {
+        for(String host : getHosts()) {
+            LinuxCommandExecutor.executeCommand(host, "root", String.format("for file in `find /var/lib/ambari-agent/ -path */common-services/%s/*/service_check.py`;" +
+                    " do  sed -i\".original\" '/def /a \\ \\ \\ \\ raise Fail(\"" + IDConstants.TEST_SERVICE_CHECK_INJECTED_FAILURE + "\")'  $file;  done;", getName()));
+        }
+    }
+
+    public void fixServiceCheckFailure() {
+        for(String host : getHosts()) {
+            LinuxCommandExecutor.executeCommand(host, "root", String.format("for file in `find /var/lib/ambari-agent/ -path */common-services/%s/*/service_check.py.original`;" +
+                    " do  mv -f \"$file\" \"${file//\\.original/}\" ;  done;", getName()));
+        }
+    }
+
+    public List<ServiceComponent> getSlaveComponents(){
+        List<ServiceComponent> serviceComponents = new ArrayList<ServiceComponent>();
+
+        for(ServiceComponent serviceComponent : getServiceComponents()) {
+            if(serviceComponent.isSlaveComponent())
+                serviceComponents.add(serviceComponent);
+        }
+        return serviceComponents;
+    }
+
+    public ServiceComponent getComponent(String componentName){
+        for(ServiceComponent serviceComponent : getServiceComponents()) {
+            if (serviceComponent.getName().equalsIgnoreCase(componentName))
+                return serviceComponent;
+        }
+        return null;
+    }
+
 }

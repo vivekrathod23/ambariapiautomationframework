@@ -1,7 +1,6 @@
 {
-  "ClusterStackVersions":{
-    "stack":"{STACKNAME}",
-    "version":"{STACKVERSION}",
-    "repository_version":"{STACKVERSION}.{BUILDNUMBER}"
-  }
+"ClusterStackVersions":{
+  "stack":"{STACKNAME}",
+  "version":"{STACKVERSION}",
+  "repository_version":"{STACKVERSION}.{BUILDNUMBER}"}
 }
