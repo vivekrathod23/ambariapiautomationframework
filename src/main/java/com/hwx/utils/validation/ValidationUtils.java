@@ -1,11 +1,13 @@
 package com.hwx.utils.validation;
 
+import com.hwx.ambariapilib.AmbariItems;
 import com.hwx.ambariapilib.AmbariManager;
 import com.hwx.ambariapilib.cluster.Cluster;
 import com.hwx.ambariapilib.host.Host;
 import com.hwx.ambariapilib.host.HostComponent;
 import com.hwx.ambariapilib.service.Service;
 import com.hwx.clientlib.http.HTTPResponse;
+import com.hwx.utils.logging.LogManager;
 
 import java.util.ArrayList;
 
@@ -16,33 +18,36 @@ public class ValidationUtils {
 
     private static AmbariManager ambariManager;
     private static Cluster cluster;
+    static LogManager logger = LogManager.getLoggerInstance(AmbariItems.class.getSimpleName());
 
     static {
         ambariManager = new AmbariManager();
         cluster = ambariManager.getClusters().get(0);
     }
 
-  public static boolean validateResponseCode(HTTPResponse response, int... responseCodeList){
-    for(int responseCode : responseCodeList)
-      if(response.getStatusCode() == responseCode)
+    public static boolean validateResponseCode(HTTPResponse response, int... responseCodeList){
+        for(int responseCode : responseCodeList)
+            if(response.getStatusCode() == responseCode)
+                return true;
+
+        return false;
+    }
+
+    //Check for all the services
+    public static boolean isAllServiceStarted(){
+        ArrayList<Service> serviceList = cluster.getServices();
+
+        for(int i=0;i<serviceList.size();i++){
+            //Check status for each service
+            Service service = serviceList.get(i);
+            if(!service.isStarted()) {
+                logger.logInfo("Service " + service.getName() + " is not started");
+                return false;
+            }
+        }
+
         return true;
-
-    return false;
-  }
-
-  //Check for all the services
-  public static boolean isAllServiceStarted(){
-     ArrayList<Service> serviceList = cluster.getServices();
-
-      for(int i=0;i<serviceList.size();i++){
-          //Check status for each service
-          Service service = serviceList.get(i);
-          if(! service.isStarted())
-              return false;
-      }
-
-      return true;
-  }
+    }
 
     //Get the failed serv ice list
     public static  ArrayList<Service> getFailedServices(){
@@ -69,9 +74,14 @@ public class ValidationUtils {
 
             for(int j=0;j<hostComponentList.size();j++){
                 HostComponent hostComponent = hostComponentList.get(j);
-
-                if(! hostComponent.isStarted())
-                    return false;
+                if(hostComponent.getName().contains("CLIENT")) {
+                    if (!hostComponent.isInstalled())
+                        return false;
+                }
+                else {
+                    if (!hostComponent.isStarted())
+                        return false;
+                }
             }
         }
         return true;

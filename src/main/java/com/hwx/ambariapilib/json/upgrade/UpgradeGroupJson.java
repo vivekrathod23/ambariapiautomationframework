@@ -13,6 +13,7 @@ public class UpgradeGroupJson {
     private String status;
     private String title;
     private int total_task_count;
+    private String display_status;
 
     public int getCompleted_task_count() {
         return completed_task_count;
@@ -48,5 +49,9 @@ public class UpgradeGroupJson {
 
     public int getTotal_task_count() {
         return total_task_count;
+    }
+
+    public String getDisplayStatus() {
+        return display_status;
     }
 }

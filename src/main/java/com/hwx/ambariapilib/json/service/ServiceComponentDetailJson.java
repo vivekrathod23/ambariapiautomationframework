@@ -8,7 +8,7 @@ import com.hwx.ambariapilib.json.host.HostComponentJson;
 public class ServiceComponentDetailJson {
     private String href;
     private ServiceComponentLongInfoJson ServiceComponentInfo;
-    private HostComponentJson host_components;
+    private HostComponentJson[] host_components;
 
     public String getHref() {
         return href;
@@ -26,11 +26,8 @@ public class ServiceComponentDetailJson {
         ServiceComponentInfo = serviceComponentInfo;
     }
 
-    public HostComponentJson getHost_components() {
+    public HostComponentJson[] getHost_components() {
         return host_components;
     }
 
-    public void setHost_components(HostComponentJson host_components) {
-        this.host_components = host_components;
-    }
 }

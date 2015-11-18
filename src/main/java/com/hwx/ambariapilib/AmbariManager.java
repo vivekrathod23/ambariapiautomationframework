@@ -97,6 +97,7 @@ public class AmbariManager {
 
     private void fetchAllClusters(){
         HTTPRequest req = new HTTPRequest(HTTPMethods.GET, "/clusters");
+        // TODO - Add isAmbariServerRunning() check before this call to avoid java.net.ConnectException: Operation timed out
         HTTPResponse resp = rc.sendHTTPRequest(req);
 
         clusterListJson = gson.fromJson(resp.getBody().getBodyText(), ClusterListJson.class);

@@ -1,0 +1,17 @@
+{
+  "RequestInfo": {
+    "command": "{OPERATION}",
+    "context": "Issued {OPERATION} for {COMPONENT_NAME}",
+    "operation_level": {
+      "level": "HOST",
+      "cluster_name": "{CLUSTER_NAME}"
+    }
+  },
+  "Requests/resource_filters": [
+    {
+      "service_name": "{SERVICE_NAME}",
+      "component_name": "{COMPONENT_NAME}",
+      "hosts": "{HOST_NAME}"
+    }
+  ]
+}

@@ -19,28 +19,33 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.19</version>
+            </plugin>
         </plugins>
     </build>
 
     <dependencies>
-    <dependency>
-        <groupId>com.jayway.restassured</groupId>
-        <artifactId>rest-assured</artifactId>
-        <version>2.5.0</version>
-        <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>2.5.0</version>
+            <scope>compile</scope>
+        </dependency>
 
-    <dependency>
-        <groupId>com.jayway.restassured</groupId>
-        <artifactId>json-path</artifactId>
-        <version>2.5.0</version>
-    </dependency>
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>json-path</artifactId>
+            <version>2.5.0</version>
+        </dependency>
 
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>6.1.1</version>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -55,11 +60,11 @@
             <version>2.3.1</version>
         </dependency>
 
-		<dependency>
-			<groupId>commons-configuration</groupId>
-			<artifactId>commons-configuration</artifactId>
-			<version>1.10</version>
-		</dependency>
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>1.10</version>
+        </dependency>
 
         <dependency>
             <groupId>postgresql</groupId>
@@ -72,14 +77,6 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.6</version>
         </dependency>
-
-        <dependency>
-            <groupId>postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>9.1-901.jdbc4</version>
-        </dependency>
     </dependencies>
-
-
 
 </project>

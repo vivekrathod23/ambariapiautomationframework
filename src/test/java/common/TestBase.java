@@ -11,8 +11,6 @@ import org.testng.annotations.BeforeClass;
  */
 public class TestBase {
 
-
-
     protected LogManager logger = LogManager.getLoggerInstance(this.getClass().getSimpleName());
 
     protected AmbariManager ambariManager;

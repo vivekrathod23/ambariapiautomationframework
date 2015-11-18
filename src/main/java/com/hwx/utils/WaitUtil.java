@@ -1,76 +1,76 @@
 package com.hwx.utils;
 
+import com.hwx.ambariapilib.AmbariItems;
 import com.hwx.ambariapilib.common.Request;
+import com.hwx.utils.logging.LogManager;
 
 /**
  * Created by ajain on 11/5/15.
  */
 public class WaitUtil {
 
+    public static final int timeOutInSec = 20000; //Integer.parseInt(ConfigProperties.TIMEOUT.getKey());
+    static LogManager logger = LogManager.getLoggerInstance(AmbariItems.class.getSimpleName());
 
+    //Wait for request to be completed
+    public static void waitForRequestToBeCompleted(String clusterAPIUrl, int requestId) throws Exception {
+        Request req = new Request(clusterAPIUrl+"/requests/"+requestId);
 
-  public static final int timeOutInSec = 20000; //Integer.parseInt(ConfigProperties.TIMEOUT.getKey());
+        int iteration = 1;
+        int waitTime = 0;
+        String requestStatus = req.getRequestDetailJson().getRequests().getRequest_status();
 
+        while((waitTime < timeOutInSec) && (!requestStatus.equals("COMPLETED"))){
+            //Increase wait time linearly
+            waitForIncreasingInterval(WaitTime.LONGWAIT,iteration);
+            waitTime += WaitTime.LONGWAIT.getTime() * iteration;
 
+            logger.logInfo("Wait for " + (WaitTime.LONGWAIT.getTime() * iteration) + "   Total Wait Time : " + waitTime);
 
-
-  //Wait for request to be completed
-  public static void waitForRequestToBeCompleted(String clusterAPIUrl, int requestId) throws Exception {
-    Request req = new Request(clusterAPIUrl+"/requests/"+requestId);
-
-    int iteration = 1;
-    int waitTime = 0;
-    String requestStatus = req.getRequestDetailJson().getRequests().getRequest_status();
-
-    while((waitTime < timeOutInSec) && (!requestStatus.equals("COMPLETED"))){
-     //Increase wait time linearly
-     waitForIncreasingInterval(WaitTime.LONGWAIT,iteration);
-     waitTime += WaitTime.LONGWAIT.getTime() * iteration;
-
-     System.out.println("Wait for "+(WaitTime.LONGWAIT.getTime() * iteration)+"   Total Wait Time : "+waitTime);
-
-     //Send the request again
-     req = new Request(clusterAPIUrl+"/requests/"+requestId);
-     requestStatus = req.getRequestDetailJson().getRequests().getRequest_status();
-     if(requestStatus.equalsIgnoreCase("FAILED"))
-     throw new Exception("Error during package install operation on one or more nodes");
+            //Send the request again
+            req = new Request(clusterAPIUrl+"/requests/"+requestId);
+            requestStatus = req.getRequestDetailJson().getRequests().getRequest_status();
+            if(requestStatus.equalsIgnoreCase("FAILED"))
+                throw new Exception("Error during package install operation on one or more nodes");
 //            iteration *= 2;
-     }
+        }
 
-    if(waitTime >= timeOutInSec ){
-      //Throw Timeout Exception
-      //ToDo Define timeout exception
-      }
-   }
+        if(waitTime >= timeOutInSec ){
+            //Throw Timeout Exception
+            //ToDo Define timeout exception
+        }
 
-  //Wait for defined period
-  public static void waitForFixedInterval(WaitTime waitTime){
-    waitForFixedInterval(waitTime.getTime());
-  }
+        logger.logInfo("Request completed successfully");
+    }
+
+    //Wait for defined period
+    public static void waitForFixedInterval(WaitTime waitTime){
+        waitForFixedInterval(waitTime.getTime());
+    }
 
 
-  //Wait for fixed interval
-  public static void waitForFixedInterval(int intervalInSec){
-    try{
-      //ToDo how to log this??
+    //Wait for fixed interval
+    public static void waitForFixedInterval(int intervalInSec){
+        try{
+            //ToDo how to log this??
 //            LogManager.getLoggerInstance().logInfo("Waiting for "+intervalInSec+" Seconds");
-      Thread.sleep(intervalInSec*1000);
-    }
-    catch (Exception e){
+            Thread.sleep(intervalInSec*1000);
+        }
+        catch (Exception e){
 //            LogManager.getLoggerInstance().logWarning("Issue while waiting : "+e.getMessage());
+        }
     }
-  }
 
 
-  //This function can be used where wait time need to be increased with iteration
-  public static void waitForIncreasingInterval(WaitTime intervalInSec, int increase){
-    waitForIncreasingInterval(intervalInSec.getTime(), increase);
-  }
+    //This function can be used where wait time need to be increased with iteration
+    public static void waitForIncreasingInterval(WaitTime intervalInSec, int increase){
+        waitForIncreasingInterval(intervalInSec.getTime(), increase);
+    }
 
-  //This function can be used where wait time need to be increased with iteration
-  public static void waitForIncreasingInterval(int intervalInSec, int increase){
-    waitForFixedInterval(intervalInSec*increase);
-  }
+    //This function can be used where wait time need to be increased with iteration
+    public static void waitForIncreasingInterval(int intervalInSec, int increase){
+        waitForFixedInterval(intervalInSec*increase);
+    }
 
 
 }
