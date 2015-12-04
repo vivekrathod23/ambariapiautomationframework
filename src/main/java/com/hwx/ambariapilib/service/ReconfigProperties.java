@@ -3,30 +3,34 @@ package com.hwx.ambariapilib.service;
 /**
  * Created by vrathod on 11/25/15.
  */
-import com.google.gson.Gson;
+
+import com.hwx.ambariapilib.AmbariItems;
 import com.hwx.ambariapilib.AmbariManager;
 import com.hwx.ambariapilib.cluster.Cluster;
 import com.hwx.ambariapilib.host.Host;
 import com.hwx.ambariapilib.json.ConfigProperties.CoreSiteConfigHead;
+import com.hwx.ambariapilib.json.service.Configs.Desired;
 import com.hwx.ambariapilib.json.service.DesiredConfigs;
+import com.hwx.clientlib.AuthType;
 import com.hwx.clientlib.RestAPIClient;
 import com.hwx.clientlib.RestAPIClientFactory;
 import com.hwx.clientlib.RestAPIClientType;
 import com.hwx.clientlib.http.HTTPMethods;
 import com.hwx.clientlib.http.HTTPRequest;
 import com.hwx.clientlib.http.HTTPResponse;
+import com.hwx.utils.config.ConfigProperties;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class ReconfigProperties {
+public class ReconfigProperties extends AmbariItems {
     AmbariManager ambariManager = new AmbariManager();
     ArrayList<Host> hosts = ((Cluster)this.ambariManager.getClusters().get(0)).getHosts();
     ArrayList<Service> services = ((Cluster)this.ambariManager.getClusters().get(0)).getServices();
-    protected Gson gson = new Gson();
-    protected static RestAPIClient rc = RestAPIClientFactory.getAPIClient(RestAPIClientType.RESTASSURED);
+    // protected Gson gson = new Gson();
+   // protected static RestAPIClient rc = RestAPIClientFactory.getAPIClient(RestAPIClientType.RESTASSURED);
     //public static Map<String, HashSet<ServiceProperty>> serviceProperties = new HashMap<String, HashSet<ServiceProperty>>();
-    public HashSet<ServiceProperties> serviceProperties;
+    public HashSet<ServiceProperties> serviceProperties = new HashSet<ServiceProperties>();
     public DesiredConfigs desiredConfigs = new DesiredConfigs();
     public String clusterName = ambariManager.getClusters().get(0).getClusterJson().getClusters().getCluster_name();
 
@@ -37,13 +41,13 @@ public class ReconfigProperties {
         HashSet<Property> properties= new HashSet<Property>();
         Property p = new Property();
         p.setPropertyName("ipc.client.connect.max.retries");
-        p.setPropertyValue("");
+        p.setPropertyValue("X");
         properties.add(p);
         SP.setFileName("core-site");
         SP.setProperties(properties);
         serviceProperties.add(SP);
 
-
+/*
 //properties for hdfs-site . 1 custom property remaining
         properties.clear();
         p.setPropertyName("dfs.replication.max");
@@ -88,31 +92,53 @@ public class ReconfigProperties {
         SP.setFileName("zoo.cfg");
         SP.setProperties(properties);
         serviceProperties.add(SP);
-
+*/
     }
 
 
 
-    void readPropertiesAndStoreValues()
-    {
+    public void readPropertiesAndStoreValues() throws Exception {
 
 
     for(ServiceProperties sp : serviceProperties)
     {
         String file = sp.getFileName();
-        HashSet<Property> properties = sp.getProperties();
-        String tag = getTag(file);
-  //      cl1/configurations?type=core-site&tag=version1448408000030
 
-        String url="curl -u admin:admin -X GET http://192.168.64.101:8080/api/v1/clusters/";
-        url+=clusterName;
-        url+="/configurations?type=";
-        url+=file;
-        url+="&tag=";
+        String tag = getTags(file).trim();
+  //    cl1/configurations?type=core-site&tag=version1448408000030
+        String url = ambariManager.getClusters().get(0).getClusterJson().getHref();
+        //String url2 ="/"+clusterName;
+        String url2="/configurations?type=";
+        url2+=file;
+        url2+="&tag=";
+        //url2+="version1448408000030";
+        url2+=tag;
+      //  String url="curl -u admin:admin -X GET http://192.168.64.101:8080/api/v1/clusters/";
+        //url+=clusterName;
+        //url+="/configurations?type=";
+        //url+=file;
+        //url+="&tag=";
        // url+=tag+"'";
-        HTTPRequest req = new HTTPRequest(HTTPMethods.GET, url);
-        HTTPResponse resp = rc.sendHTTPRequest(req);
-        CoreSiteConfigHead requestJson = gson.fromJson(resp.getBody().getBodyText(), CoreSiteConfigHead.class);
+        System.out.println("*"+url+url2);
+        String apiurl = url+url2;
+
+        HTTPRequest req = new HTTPRequest(HTTPMethods.GET, apiurl);
+
+        //HTTPRequest req = new HTTPRequest(HTTPMethods.GET, url);
+        RestAPIClient rc1 = RestAPIClientFactory.getAPIClient(RestAPIClientType.RESTASSURED);
+        rc1.setHost(conf.getString(ConfigProperties.HOST.getKey()));
+        rc1.setPort(conf.getInt(ConfigProperties.PORT.getKey()));
+        rc1.setAuth(AuthType.BASIC);
+        HTTPResponse resp = rc1.sendHTTPRequest(req);
+        if(file.equals("core-site"))
+        {
+            CoreSiteConfigHead requestJson = gson.fromJson(resp.getBody().getBodyText(), CoreSiteConfigHead.class);
+            HashSet<Property> properties = sp.getProperties();
+            String value = requestJson.getItems()[0].getProperties().getIpcClientConnectMaxRetries().toString();
+            System.out.println(value);
+            //properties.
+        }
+
 
     }
 
@@ -125,35 +151,41 @@ public class ReconfigProperties {
 
     }
 
-public String getTag(String file)
+public String getTags(String file)
 {
     String tag="";
     //[Note: have to get the host address from config.properties]
-    String url = "curl -u admin:admin -X GET http://192.168.64.101:8080/api/v1/clusters/";//cl1?fields=Clusters/desired_configs";
+   // String url = "curl -u admin:admin -X GET http://192.168.64.101:8080/api/v1/clusters/";//cl1?fields=Clusters/desired_configs";
+    String url;
+    url = ambariManager.getClusters().get(0).getClusterJson().getHref();
+   // String url2 ="/"+clusterName;
+    String url2="?fields=Clusters/desired_configs";
+    System.out.println("**"+url+url2);
+    HTTPRequest req = new HTTPRequest(HTTPMethods.GET, url+url2);
 
-    url+=clusterName;
-    url+="?fields=Clusters/desired_configs";
-    System.out.println(url);
-    HTTPRequest req = new HTTPRequest(HTTPMethods.GET, url);
+    //url+=clusterName;
+    //url+="?fields=Clusters/desired_configs";
+
+   // HTTPRequest req = new HTTPRequest(HTTPMethods.GET, url);
     HTTPResponse resp = rc.sendHTTPRequest(req);
     //desiredConfigs = gson.fromJson(resp.getBody().getBodyText(), DesiredConfigs.class);
-    DesiredConfigs requestJson = gson.fromJson(resp.getBody().getBodyText(), DesiredConfigs.class);
+    Desired requestJson = gson.fromJson(resp.getBody().getBodyText(), Desired.class);
 
     if(file.equals("core-site"))
     {
-        return desiredConfigs.getCoreSite().getTag().toString();
+        return requestJson.getClusters().getDesiredConfigs().getCoreSite().getTag().toString();
     }
     else if(file.equals("hdfs-site"))
     {
-        return desiredConfigs.getHdfsSite().getTag().toString();
+        return requestJson.getClusters().getDesiredConfigs().getHdfsSite().getTag().toString();
     }
     else if(file.equals("ssl-server"))
     {
-        return desiredConfigs.getSslServer().getTag().toString();
+        return requestJson.getClusters().getDesiredConfigs().getSslServer().getTag().toString();
     }
     else if(file.equals("mapred-site"))
     {
-        return desiredConfigs.getMapredSite().getTag().toString();
+         return requestJson.getClusters().getDesiredConfigs().getMapredSite().getTag().toString();
     }
     else if(file.equals("yarn-site"))
     {
@@ -161,7 +193,7 @@ public String getTag(String file)
     }
     else if(file.equals("zoo.cfg"))
     {
-        return desiredConfigs.getZooCfg().getTag().toString();
+       // return desiredConfigs.getZooCfg().getTag().toString();
     }
 
     return tag;

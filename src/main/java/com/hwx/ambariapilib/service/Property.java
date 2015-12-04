@@ -5,8 +5,8 @@ package com.hwx.ambariapilib.service;
  */
 public class Property {
 
-    private String propertyName=null;
-    private String propertyValue=null;
+    private String propertyName=" ";
+    private String propertyValue=" ";
 
     public String getPropertyName() {
         return propertyName;

@@ -1,5 +1,4 @@
 package com.hwx.ambariapilib.json.ConfigProperties;
-
 /**
  * Created by vrathod on 11/30/15.
  */
@@ -7,8 +6,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import javax.annotation.Generated;
-import java.util.ArrayList;
-import java.util.List;
 
 @Generated("org.jsonschema2pojo")
 public class CoreSiteConfigHead {
@@ -18,10 +15,16 @@ public class CoreSiteConfigHead {
     private String href;
     @SerializedName("items")
     @Expose
-    private List<CoreSiteConfig.Item> items = new ArrayList<CoreSiteConfig.Item>();
+    //private List<CoreSiteItem> items = new ArrayList<CoreSiteItem>();
+    private CoreSiteItem[] items;
+
+    public CoreSiteItem[] getItems() {
+        return items;
+    }
 
     /**
      *
+
      * @return
      * The href
      */
@@ -36,24 +39,6 @@ public class CoreSiteConfigHead {
      */
     public void setHref(String href) {
         this.href = href;
-    }
-
-    /**
-     *
-     * @return
-     * The items
-     */
-    public List<CoreSiteConfig.Item> getItems() {
-        return items;
-    }
-
-    /**
-     *
-     * @param items
-     * The items
-     */
-    public void setItems(List<CoreSiteConfig.Item> items) {
-        this.items = items;
     }
 
 }

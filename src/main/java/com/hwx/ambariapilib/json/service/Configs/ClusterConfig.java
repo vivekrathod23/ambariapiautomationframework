@@ -10,7 +10,7 @@ import javax.annotation.Generated;
  */
 
 @Generated("org.jsonschema2pojo")
-public class Clusters {
+public class ClusterConfig {
 
     @SerializedName("cluster_name")
     @Expose
